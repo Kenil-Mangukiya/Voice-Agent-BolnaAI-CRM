@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Upload, X, Edit2, Camera } from 'lucide-react';
 import { registerUser } from '../services/apis/authAPI';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -18,7 +19,6 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +88,6 @@ const RegisterPage = () => {
     }
 
     setErrors(newErrors);
-    setSubmitError('');
 
     if (Object.keys(newErrors).length === 0) {
       setLoading(true);
@@ -101,11 +100,13 @@ const RegisterPage = () => {
         });
         
         console.log('Registration successful:', response);
-        alert(response.message || 'Registration successful!');
-        navigate('/login');
+        toast.success(response.message || 'Registration successful!');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500);
       } catch (error) {
         console.error('Registration error:', error);
-        setSubmitError(error.message || 'Registration failed. Please try again.');
+        toast.error(error.message || 'Registration failed. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -275,13 +276,6 @@ const RegisterPage = () => {
               )}
             </div>
           </div>
-
-          {/* Error Message */}
-          {submitError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {submitError}
-            </div>
-          )}
 
           {/* Submit Button */}
           <div>

@@ -1,15 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import config from "../config/config";
 
 cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.CLOUD_KEY, 
-    api_secret: process.env.CLOUD_SECRET
+    cloud_name: config.cloudinaryCloudName, 
+    api_key: config.cloudinaryApiKey, 
+    api_secret: config.cloudinaryApiSecret
 });
 
-console.log("cloud_name", process.env.CLOUD_NAME);
-console.log("cloud_key", process.env.CLOUD_KEY);
-console.log("cloud_secret", process.env.CLOUD_SECRET);
+
+console.log("Cloudinary configuration:", cloudinary.config());
 
 const uploadOnCloudinary = async (filePath: string) => {
     try {

@@ -30,6 +30,7 @@ export const registerUser = async (data: RegisterUserData) => {
     formData.append('username', data.username);
     formData.append('email', data.email);
     formData.append('password', data.password);
+    console.log("Data is : ",formData)
     
     if (data.avatar) {
       formData.append('avatar', data.avatar);

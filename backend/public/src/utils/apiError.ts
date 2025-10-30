@@ -28,6 +28,16 @@ class apiError extends Error {
             }
         }
     }
+
+    // Add toJSON to serialize properly
+    toJSON() {
+        return {
+            success: this.success,
+            statusCode: this.statusCode,
+            message: this.message,
+            errors: this.errors
+        };
+    }
 }
 
 export default apiError;

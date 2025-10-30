@@ -1,6 +1,10 @@
-import router from "./routes";
+import express from "express";
 import { registerUser } from "../controllers/authController";
+import upload from "../middlewares/multerMiddleware";
 
-router.post("/register", registerUser);
+const authRoute = express.Router();
 
-export { router as authRoute };
+// Use any() to allow register without avatar, fields() to handle with optional file
+authRoute.post("/register", upload.any(), registerUser);
+
+export { authRoute };

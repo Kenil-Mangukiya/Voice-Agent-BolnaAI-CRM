@@ -5,14 +5,18 @@ import { authRoute } from "./public/src/routes/authRoute";
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+// CORS must come before other middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || '*',
     credentials: true
 }));
 
+// Body parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Routes
 app.use("/api/auth", authRoute);
 
 export default app;
