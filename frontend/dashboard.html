@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RoadAI Assistant</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-wrapper">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" fill="#4F46E5" opacity="0.1"/>
+                    <path d="M20 10L26 16L20 22L14 16L20 10Z" fill="#4F46E5"/>
+                    <path d="M12 20C12 15.5817 15.5817 12 20 12V20H12Z" fill="#818CF8"/>
+                    <circle cx="20" cy="20" r="4" fill="#4F46E5"/>
+                </svg>
+                <span>RoadAI Assistant</span>
+            </div>
+            <div class="nav-actions">
+                <button class="icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=4F46E5&color=fff" alt="User" class="user-avatar">
+                    <span>John Doe</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-page="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" data-page="calls">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>Call History</span>
+                </li>
+                <li class="menu-item" data-page="analytics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    <span>Analytics</span>
+                </li>
+                <li class="menu-item" data-page="crm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>CRM</span>
+                </li>
+                <li class="menu-item" data-page="invoicing">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Invoicing</span>
+                </li>
+                <li class="menu-item" data-page="settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6"/>
+                    </svg>
+                    <span>AI Settings</span>
+                </li>
+                <li class="menu-item" data-page="team">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Team</span>
+                </li>
+                <li class="menu-item" data-page="support">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span>Help & Support</span>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="trial-card">
+                    <h4>Free Trial</h4>
+                    <div class="trial-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                        <span>21 mins left of 30 mins</span>
+                    </div>
+                    <a href="index.html#pricing" class="upgrade-btn">Upgrade Plan</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page-content active" id="page-dashboard">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h1>Welcome to RoadAI Assistant! 👋</h1>
+                    <p>Your AI voice agent is now live and ready to handle calls. Here's what's happening right now.</p>
+                </div>
+                <button class="test-call-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    Make Test Call
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Agent Status</span>
+                        <span class="status-dot active"></span>
+                    </div>
+                    <div class="stat-value">Active</div>
+                    <div class="stat-footer">
+                        <span class="stat-change positive">Online for 2h 15m</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Calls Today</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-footer">
+                        <span class="stat-change neutral">Ready to receive</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Avg Response Time</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="stat-value">2.1s</div>
+                    <div class="stat-footer">
+                        <span class="stat-change positive">↓ 0.3s faster</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Success Rate</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-footer">
+                        <span class="stat-change neutral">No data yet</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section-header">
+                <h2>Quick Actions</h2>
+                <p>Common tasks to get you started</p>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <h3>Test Your Agent</h3>
+                    <p>Make a test call to experience how your AI agent handles customer interactions</p>
+                    <button class="action-btn">Test Now</button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Customize Responses</h3>
+                    <p>Fine-tune your AI agent's responses to match your brand voice</p>
+                    <button class="action-btn">Customize</button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Invite Team Members</h3>
+                    <p>Add your team to collaborate and manage the AI agent together</p>
+                    <button class="action-btn">Invite</button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3>Setup Call Forwarding</h3>
+                    <p>Complete phone forwarding setup to start receiving actual calls</p>
+                    <button class="action-btn">Setup</button>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section-header">
+                <h2>Recent Activity</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+
+            <div class="activity-card">
+                <div class="empty-state">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <h3>No calls yet</h3>
+                    <p>Your AI agent is ready and waiting. Make a test call or complete your phone forwarding setup to start receiving calls.</p>
+                    <div class="empty-actions">
+                        <button class="btn btn-primary">Make Test Call</button>
+                        <button class="btn btn-secondary">View Setup Guide</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Setup Checklist -->
+            <div class="section-header">
+                <h2>Setup Checklist</h2>
+                <p>Complete these steps to get the most out of RoadAI</p>
+            </div>
+
+            <div class="checklist-card">
+                <div class="checklist-item completed">
+                    <div class="checklist-check">✓</div>
+                    <div class="checklist-content">
+                        <h4>Create Your Account</h4>
+                        <p>You've successfully set up your RoadAI account</p>
+                    </div>
+                </div>
+
+                <div class="checklist-item completed">
+                    <div class="checklist-check">✓</div>
+                    <div class="checklist-content">
+                        <h4>Configure AI Agent</h4>
+                        <p>Voice settings and responses are configured</p>
+                    </div>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="checklist-check">3</div>
+                    <div class="checklist-content">
+                        <h4>Test Your Agent</h4>
+                        <p>Make a test call to ensure everything works perfectly</p>
+                    </div>
+                    <button class="checklist-btn">Test</button>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="checklist-check">4</div>
+                    <div class="checklist-content">
+                        <h4>Complete Phone Setup</h4>
+                        <p>Forward your business calls to start receiving</p>
+                    </div>
+                    <button class="checklist-btn">Setup</button>
+                </div>
+
+                <div class="checklist-item">
+                    <div class="checklist-check">5</div>
+                    <div class="checklist-content">
+                        <h4>Invite Your Team</h4>
+                        <p>Add team members to collaborate on call management</p>
+                    </div>
+                    <button class="checklist-btn">Invite</button>
+                </div>
+            </div>
+            </div>
+
+            <!-- Call History Page -->
+            <div class="page-content" id="page-calls">
+                <div class="page-header">
+                    <div>
+                        <h1>Call History</h1>
+                        <p>View and manage all customer calls handled by your AI agent</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                            Export Report
+                        </button>
+                        <button class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            Make Test Call
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="search-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" placeholder="Search calls by phone, location, or issue...">
+                    </div>
+                    <select class="filter-select">
+                        <option>All Calls</option>
+                        <option>Completed</option>
+                        <option>Transferred</option>
+                        <option>Missed</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Time</option>
+                        <option>Today</option>
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Languages</option>
+                        <option>English</option>
+                        <option>Hindi</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="calls-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Customer</th>
+                                <th>Location</th>
+                                <th>Issue</th>
+                                <th>Language</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sample calls for demo -->
+                            <tr>
+                                <td>
+                                    <div class="time-cell">
+                                        <span class="date">Oct 22, 2025</span>
+                                        <span class="time">2:45 PM</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-avatar">R</div>
+                                        <div>
+                                            <div class="customer-name">Rajesh Kumar</div>
+                                            <div class="customer-phone">+91 98765 43210</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Mumbai, MH</td>
+                                <td>
+                                    <span class="issue-badge">Tire Puncture</span>
+                                </td>
+                                <td>
+                                    <span class="language-badge">🇮🇳 Hindi</span>
+                                </td>
+                                <td>4m 32s</td>
+                                <td>
+                                    <span class="status-badge status-completed">Completed</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="icon-action" title="Play recording">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <polygon points="5 3 19 12 5 21 5 3"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-action" title="View transcript">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14 2 14 8 20 8"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-action" title="More options">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="1"/>
+                                                <circle cx="12" cy="5" r="1"/>
+                                                <circle cx="12" cy="19" r="1"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="time-cell">
+                                        <span class="date">Oct 22, 2025</span>
+                                        <span class="time">1:20 PM</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-avatar">P</div>
+                                        <div>
+                                            <div class="customer-name">Priya Sharma</div>
+                                            <div class="customer-phone">+91 87654 32109</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Pune, MH</td>
+                                <td>
+                                    <span class="issue-badge">Battery Dead</span>
+                                </td>
+                                <td>
+                                    <span class="language-badge">🇬🇧 English</span>
+                                </td>
+                                <td>3m 15s</td>
+                                <td>
+                                    <span class="status-badge status-transferred">Transferred</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="icon-action" title="Play recording">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <polygon points="5 3 19 12 5 21 5 3"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-action" title="View transcript">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14 2 14 8 20 8"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-action" title="More options">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="1"/>
+                                                <circle cx="12" cy="5" r="1"/>
+                                                <circle cx="12" cy="19" r="1"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state-small" style="display: none;">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <h3>No calls yet</h3>
+                    <p>Your AI agent is ready. Make a test call to see it in action!</p>
+                    <button class="btn btn-primary">Make Test Call</button>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div class="page-content" id="page-analytics">
+                <div class="page-header">
+                    <div>
+                        <h1>Analytics</h1>
+                        <p>Track performance metrics and gain insights into your AI agent</p>
+                    </div>
+                    <div class="page-actions">
+                        <select class="filter-select">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 3 months</option>
+                            <option>Last year</option>
+                        </select>
+                        <button class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Total Calls</span>
+                            <span class="metric-trend positive">↑ 12%</span>
+                        </div>
+                        <div class="metric-value">2</div>
+                        <div class="metric-chart">
+                            <div class="mini-chart">
+                                <span style="height: 30%"></span>
+                                <span style="height: 45%"></span>
+                                <span style="height: 60%"></span>
+                                <span style="height: 40%"></span>
+                                <span style="height: 75%"></span>
+                                <span style="height: 55%"></span>
+                                <span style="height: 80%"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Avg Call Duration</span>
+                            <span class="metric-trend neutral">→ 0%</span>
+                        </div>
+                        <div class="metric-value">3m 54s</div>
+                        <div class="metric-chart">
+                            <div class="mini-chart">
+                                <span style="height: 60%"></span>
+                                <span style="height: 55%"></span>
+                                <span style="height: 58%"></span>
+                                <span style="height: 62%"></span>
+                                <span style="height: 59%"></span>
+                                <span style="height: 61%"></span>
+                                <span style="height: 60%"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Resolution Rate</span>
+                            <span class="metric-trend positive">↑ 5%</span>
+                        </div>
+                        <div class="metric-value">50%</div>
+                        <div class="metric-chart">
+                            <div class="mini-chart">
+                                <span style="height: 40%"></span>
+                                <span style="height: 42%"></span>
+                                <span style="height: 45%"></span>
+                                <span style="height: 47%"></span>
+                                <span style="height: 48%"></span>
+                                <span style="height: 49%"></span>
+                                <span style="height: 50%"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Customer Satisfaction</span>
+                            <span class="metric-trend positive">↑ 8%</span>
+                        </div>
+                        <div class="metric-value">--</div>
+                        <div class="metric-chart">
+                            <div class="mini-chart">
+                                <span style="height: 70%"></span>
+                                <span style="height: 75%"></span>
+                                <span style="height: 78%"></span>
+                                <span style="height: 80%"></span>
+                                <span style="height: 82%"></span>
+                                <span style="height: 85%"></span>
+                                <span style="height: 88%"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-row">
+                    <div class="analytics-card large">
+                        <div class="card-header">
+                            <h3>Call Volume Over Time</h3>
+                            <select class="small-select">
+                                <option>Daily</option>
+                                <option>Weekly</option>
+                                <option>Monthly</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <div class="bar-chart">
+                                <div class="chart-bar" style="height: 30%">
+                                    <span class="bar-value">3</span>
+                                </div>
+                                <div class="chart-bar" style="height: 45%">
+                                    <span class="bar-value">5</span>
+                                </div>
+                                <div class="chart-bar" style="height: 60%">
+                                    <span class="bar-value">7</span>
+                                </div>
+                                <div class="chart-bar" style="height: 40%">
+                                    <span class="bar-value">4</span>
+                                </div>
+                                <div class="chart-bar" style="height: 75%">
+                                    <span class="bar-value">9</span>
+                                </div>
+                                <div class="chart-bar" style="height: 55%">
+                                    <span class="bar-value">6</span>
+                                </div>
+                                <div class="chart-bar" style="height: 80%">
+                                    <span class="bar-value">10</span>
+                                </div>
+                            </div>
+                            <div class="chart-labels">
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Call Outcomes</h3>
+                        </div>
+                        <div class="chart-container">
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#E5E7EB" stroke-width="20"/>
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#10B981" stroke-width="20" 
+                                            stroke-dasharray="126" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" stroke-width="20" 
+                                            stroke-dasharray="63" stroke-dashoffset="0" transform="rotate(90 50 50)"/>
+                                </svg>
+                                <div class="donut-center">
+                                    <span class="donut-value">2</span>
+                                    <span class="donut-label">Total</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background: #10B981"></span>
+                                    <span>Completed</span>
+                                    <strong>50%</strong>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background: #F59E0B"></span>
+                                    <span>Transferred</span>
+                                    <strong>50%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-row">
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Top Issues</h3>
+                        </div>
+                        <div class="issues-list">
+                            <div class="issue-item">
+                                <div class="issue-info">
+                                    <span class="issue-name">Tire Puncture</span>
+                                    <span class="issue-count">1 call</span>
+                                </div>
+                                <div class="issue-bar">
+                                    <div class="issue-bar-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="issue-item">
+                                <div class="issue-info">
+                                    <span class="issue-name">Battery Dead</span>
+                                    <span class="issue-count">1 call</span>
+                                </div>
+                                <div class="issue-bar">
+                                    <div class="issue-bar-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Language Distribution</h3>
+                        </div>
+                        <div class="issues-list">
+                            <div class="issue-item">
+                                <div class="issue-info">
+                                    <span class="issue-name">🇮🇳 Hindi</span>
+                                    <span class="issue-count">1 call</span>
+                                </div>
+                                <div class="issue-bar">
+                                    <div class="issue-bar-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="issue-item">
+                                <div class="issue-info">
+                                    <span class="issue-name">🇬🇧 English</span>
+                                    <span class="issue-count">1 call</span>
+                                </div>
+                                <div class="issue-bar">
+                                    <div class="issue-bar-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Peak Hours</h3>
+                        </div>
+                        <div class="issues-list">
+                            <div class="issue-item">
+                                <div class="issue-info">
+                                    <span class="issue-name">1:00 PM - 3:00 PM</span>
+                                    <span class="issue-count">2 calls</span>
+                                </div>
+                                <div class="issue-bar">
+                                    <div class="issue-bar-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Advanced Analytics -->
+                <div class="analytics-row" style="grid-template-columns: 1fr;">
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Call Timeline - Time Quarter Analysis</h3>
+                            <select class="small-select">
+                                <option>Today</option>
+                                <option>This Week</option>
+                                <option>This Month</option>
+                            </select>
+                        </div>
+                        <div class="timeline-chart">
+                            <div class="timeline-quarter">
+                                <div class="quarter-label">12 AM - 6 AM</div>
+                                <div class="quarter-bar" style="width: 15%">
+                                    <span>3 calls</span>
+                                </div>
+                            </div>
+                            <div class="timeline-quarter">
+                                <div class="quarter-label">6 AM - 12 PM</div>
+                                <div class="quarter-bar" style="width: 45%">
+                                    <span>9 calls</span>
+                                </div>
+                            </div>
+                            <div class="timeline-quarter">
+                                <div class="quarter-label">12 PM - 6 PM</div>
+                                <div class="quarter-bar" style="width: 100%">
+                                    <span>20 calls</span>
+                                </div>
+                            </div>
+                            <div class="timeline-quarter">
+                                <div class="quarter-label">6 PM - 12 AM</div>
+                                <div class="quarter-bar" style="width: 65%">
+                                    <span>13 calls</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="insight-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5"/>
+                                <path d="M2 12l10 5 10-5"/>
+                            </svg>
+                            <div>
+                                <strong>Peak Performance:</strong> Your AI agent is most useful between 12 PM - 6 PM, handling 44% of daily calls during this period.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-row">
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Customer Demographics</h3>
+                        </div>
+                        <div class="demographics-list">
+                            <div class="demo-item">
+                                <div class="demo-info">
+                                    <span class="demo-label">New Customers</span>
+                                    <span class="demo-value">65%</span>
+                                </div>
+                                <div class="demo-progress">
+                                    <div class="demo-fill" style="width: 65%; background: #4F46E5"></div>
+                                </div>
+                            </div>
+                            <div class="demo-item">
+                                <div class="demo-info">
+                                    <span class="demo-label">Returning Customers</span>
+                                    <span class="demo-value">35%</span>
+                                </div>
+                                <div class="demo-progress">
+                                    <div class="demo-fill" style="width: 35%; background: #10B981"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Help Type Distribution</h3>
+                        </div>
+                        <div class="help-types">
+                            <div class="help-type-item">
+                                <div class="help-icon">🔧</div>
+                                <div class="help-details">
+                                    <strong>Mechanical Issues</strong>
+                                    <span>45%</span>
+                                </div>
+                            </div>
+                            <div class="help-type-item">
+                                <div class="help-icon">⚡</div>
+                                <div class="help-details">
+                                    <strong>Battery/Electrical</strong>
+                                    <span>25%</span>
+                                </div>
+                            </div>
+                            <div class="help-type-item">
+                                <div class="help-icon">🚗</div>
+                                <div class="help-details">
+                                    <strong>Tire Related</strong>
+                                    <span>20%</span>
+                                </div>
+                            </div>
+                            <div class="help-type-item">
+                                <div class="help-icon">⛽</div>
+                                <div class="help-details">
+                                    <strong>Fuel/Lockout</strong>
+                                    <span>10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Calls Managed Status</h3>
+                        </div>
+                        <div class="stats-summary">
+                            <div class="summary-stat">
+                                <div class="summary-number">45</div>
+                                <div class="summary-label">Total Calls</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-number">38</div>
+                                <div class="summary-label">Resolved by AI</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-number">7</div>
+                                <div class="summary-label">Transferred</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRM Page -->
+            <div class="page-content" id="page-crm">
+                <div class="page-header">
+                    <div>
+                        <h1>Customer Relationship Management</h1>
+                        <p>Manage customer records, track issues, and coordinate with insurance companies</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="openAddCustomerModal()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="16"/>
+                                <line x1="8" y1="12" x2="16" y2="12"/>
+                            </svg>
+                            Add Customer
+                        </button>
+                        <button class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Export to Insurance
+                        </button>
+                    </div>
+                </div>
+
+                <div class="crm-stats">
+                    <div class="crm-stat-card">
+                        <div class="crm-stat-icon" style="background: rgba(79, 70, 229, 0.1);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="crm-stat-info">
+                            <div class="crm-stat-value">128</div>
+                            <div class="crm-stat-label">Total Customers</div>
+                        </div>
+                    </div>
+
+                    <div class="crm-stat-card">
+                        <div class="crm-stat-icon" style="background: rgba(16, 185, 129, 0.1);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="crm-stat-info">
+                            <div class="crm-stat-value">45</div>
+                            <div class="crm-stat-label">Active Cases</div>
+                        </div>
+                    </div>
+
+                    <div class="crm-stat-card">
+                        <div class="crm-stat-icon" style="background: rgba(245, 158, 11, 0.1);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div class="crm-stat-info">
+                            <div class="crm-stat-value">12</div>
+                            <div class="crm-stat-label">Pending Claims</div>
+                        </div>
+                    </div>
+
+                    <div class="crm-stat-card">
+                        <div class="crm-stat-icon" style="background: rgba(99, 102, 241, 0.1);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                        </div>
+                        <div class="crm-stat-info">
+                            <div class="crm-stat-value">8</div>
+                            <div class="crm-stat-label">Insurance Partners</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="search-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" placeholder="Search customers by name, phone, or insurance ID...">
+                    </div>
+                    <select class="filter-select">
+                        <option>All Customers</option>
+                        <option>Active Cases</option>
+                        <option>Resolved Cases</option>
+                        <option>Pending Claims</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Insurance Companies</option>
+                        <option>ICICI Lombard</option>
+                        <option>HDFC ERGO</option>
+                        <option>Bajaj Allianz</option>
+                        <option>TATA AIG</option>
+                    </select>
+                </div>
+
+                <div class="crm-table-container">
+                    <table class="crm-table">
+                        <thead>
+                            <tr>
+                                <th>Customer Details</th>
+                                <th>Insurance Info</th>
+                                <th>Issue Type</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="customer-details">
+                                        <div class="customer-avatar">R</div>
+                                        <div>
+                                            <div class="customer-name">Rajesh Kumar</div>
+                                            <div class="customer-contact">+91 98765 43210</div>
+                                            <div class="customer-location">📍 Mumbai, Maharashtra</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="insurance-info">
+                                        <div class="insurance-company">ICICI Lombard</div>
+                                        <div class="insurance-id">POL-2024-45678</div>
+                                        <div class="vehicle-info">MH-02-AX-1234</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="issue-type-badge mechanical">Tire Puncture</span>
+                                </td>
+                                <td>
+                                    <div class="date-info">
+                                        <div>Oct 22, 2025</div>
+                                        <div class="time-info">2:45 PM</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="crm-status resolved">Resolved</span>
+                                </td>
+                                <td>
+                                    <div class="crm-actions">
+                                        <button class="icon-btn" title="View Details">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Send to Insurance">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="customer-details">
+                                        <div class="customer-avatar">P</div>
+                                        <div>
+                                            <div class="customer-name">Priya Sharma</div>
+                                            <div class="customer-contact">+91 87654 32109</div>
+                                            <div class="customer-location">📍 Pune, Maharashtra</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="insurance-info">
+                                        <div class="insurance-company">HDFC ERGO</div>
+                                        <div class="insurance-id">POL-2024-78901</div>
+                                        <div class="vehicle-info">MH-12-BC-5678</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="issue-type-badge electrical">Battery Dead</span>
+                                </td>
+                                <td>
+                                    <div class="date-info">
+                                        <div>Oct 22, 2025</div>
+                                        <div class="time-info">1:20 PM</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="crm-status pending">Pending Claim</span>
+                                </td>
+                                <td>
+                                    <div class="crm-actions">
+                                        <button class="icon-btn" title="View Details">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Send to Insurance">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="customer-details">
+                                        <div class="customer-avatar">A</div>
+                                        <div>
+                                            <div class="customer-name">Amit Patel</div>
+                                            <div class="customer-contact">+91 98123 45670</div>
+                                            <div class="customer-location">📍 Ahmedabad, Gujarat</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="insurance-info">
+                                        <div class="insurance-company">Bajaj Allianz</div>
+                                        <div class="insurance-id">POL-2024-23456</div>
+                                        <div class="vehicle-info">GJ-01-CD-9012</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="issue-type-badge towing">Engine Failure</span>
+                                </td>
+                                <td>
+                                    <div class="date-info">
+                                        <div>Oct 21, 2025</div>
+                                        <div class="time-info">6:30 PM</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="crm-status active">In Progress</span>
+                                </td>
+                                <td>
+                                    <div class="crm-actions">
+                                        <button class="icon-btn" title="View Details">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Send to Insurance">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Invoicing Page -->
+            <div class="page-content" id="page-invoicing">
+                <div class="page-header">
+                    <div>
+                        <h1>Insurance Company Invoicing</h1>
+                        <p>Monthly reports and invoices for insurance partners</p>
+                    </div>
+                    <div class="page-actions">
+                        <select class="filter-select">
+                            <option>October 2025</option>
+                            <option>September 2025</option>
+                            <option>August 2025</option>
+                        </select>
+                        <button class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                            Generate Report
+                        </button>
+                        <button class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Export All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="invoice-summary">
+                    <div class="summary-card">
+                        <div class="summary-header">
+                            <h3>October 2025 Summary</h3>
+                            <span class="summary-period">Oct 1 - Oct 31, 2025</span>
+                        </div>
+                        <div class="summary-stats">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Cases Handled</span>
+                                <span class="summary-value">45</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Total Insurance Partners</span>
+                                <span class="summary-value">8</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Total Invoice Amount</span>
+                                <span class="summary-value">₹1,25,000</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Pending Payments</span>
+                                <span class="summary-value">₹45,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insurance-companies-grid">
+                    <div class="insurance-card">
+                        <div class="insurance-card-header">
+                            <div class="insurance-logo">IL</div>
+                            <div class="insurance-details">
+                                <h3>ICICI Lombard</h3>
+                                <span class="partner-code">Partner ID: IC-2024-001</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">View Report</button>
+                        </div>
+                        <div class="insurance-stats-grid">
+                            <div class="insurance-stat">
+                                <span class="stat-label">Cases</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Amount</span>
+                                <span class="stat-value">₹36,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Paid</span>
+                                <span class="stat-value">₹36,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Status</span>
+                                <span class="payment-status paid">Paid</span>
+                            </div>
+                        </div>
+                        <div class="case-types">
+                            <span class="case-type-tag">Towing: 5</span>
+                            <span class="case-type-tag">Tire: 4</span>
+                            <span class="case-type-tag">Battery: 3</span>
+                        </div>
+                    </div>
+
+                    <div class="insurance-card">
+                        <div class="insurance-card-header">
+                            <div class="insurance-logo">HE</div>
+                            <div class="insurance-details">
+                                <h3>HDFC ERGO</h3>
+                                <span class="partner-code">Partner ID: HD-2024-002</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">View Report</button>
+                        </div>
+                        <div class="insurance-stats-grid">
+                            <div class="insurance-stat">
+                                <span class="stat-label">Cases</span>
+                                <span class="stat-value">10</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Amount</span>
+                                <span class="stat-value">₹28,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Paid</span>
+                                <span class="stat-value">₹0</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Status</span>
+                                <span class="payment-status pending">Pending</span>
+                            </div>
+                        </div>
+                        <div class="case-types">
+                            <span class="case-type-tag">Towing: 3</span>
+                            <span class="case-type-tag">Tire: 3</span>
+                            <span class="case-type-tag">Battery: 4</span>
+                        </div>
+                    </div>
+
+                    <div class="insurance-card">
+                        <div class="insurance-card-header">
+                            <div class="insurance-logo">BA</div>
+                            <div class="insurance-details">
+                                <h3>Bajaj Allianz</h3>
+                                <span class="partner-code">Partner ID: BA-2024-003</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">View Report</button>
+                        </div>
+                        <div class="insurance-stats-grid">
+                            <div class="insurance-stat">
+                                <span class="stat-label">Cases</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Amount</span>
+                                <span class="stat-value">₹22,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Paid</span>
+                                <span class="stat-value">₹22,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Status</span>
+                                <span class="payment-status paid">Paid</span>
+                            </div>
+                        </div>
+                        <div class="case-types">
+                            <span class="case-type-tag">Towing: 4</span>
+                            <span class="case-type-tag">Tire: 2</span>
+                            <span class="case-type-tag">Battery: 2</span>
+                        </div>
+                    </div>
+
+                    <div class="insurance-card">
+                        <div class="insurance-card-header">
+                            <div class="insurance-logo">TA</div>
+                            <div class="insurance-details">
+                                <h3>TATA AIG</h3>
+                                <span class="partner-code">Partner ID: TA-2024-004</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">View Report</button>
+                        </div>
+                        <div class="insurance-stats-grid">
+                            <div class="insurance-stat">
+                                <span class="stat-label">Cases</span>
+                                <span class="stat-value">6</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Amount</span>
+                                <span class="stat-value">₹17,000</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Paid</span>
+                                <span class="stat-value">₹0</span>
+                            </div>
+                            <div class="insurance-stat">
+                                <span class="stat-label">Status</span>
+                                <span class="payment-status pending">Pending</span>
+                            </div>
+                        </div>
+                        <div class="case-types">
+                            <span class="case-type-tag">Towing: 2</span>
+                            <span class="case-type-tag">Tire: 2</span>
+                            <span class="case-type-tag">Battery: 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detailed-invoice-section">
+                    <div class="section-header-invoice">
+                        <h2>Detailed Monthly Report</h2>
+                        <p>Export this report to share with insurance partners</p>
+                    </div>
+
+                    <div class="invoice-table-container">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Client Name</th>
+                                    <th>Insurance Company</th>
+                                    <th>Policy ID</th>
+                                    <th>Vehicle Number</th>
+                                    <th>Issue Type</th>
+                                    <th>Service Cost</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Oct 22, 2025</td>
+                                    <td>Rajesh Kumar</td>
+                                    <td>ICICI Lombard</td>
+                                    <td>POL-2024-45678</td>
+                                    <td>MH-02-AX-1234</td>
+                                    <td>Tire Puncture</td>
+                                    <td>₹2,500</td>
+                                    <td><span class="invoice-status completed">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Oct 22, 2025</td>
+                                    <td>Priya Sharma</td>
+                                    <td>HDFC ERGO</td>
+                                    <td>POL-2024-78901</td>
+                                    <td>MH-12-BC-5678</td>
+                                    <td>Battery Dead</td>
+                                    <td>₹3,000</td>
+                                    <td><span class="invoice-status pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Oct 21, 2025</td>
+                                    <td>Amit Patel</td>
+                                    <td>Bajaj Allianz</td>
+                                    <td>POL-2024-23456</td>
+                                    <td>GJ-01-CD-9012</td>
+                                    <td>Engine Failure (Towing)</td>
+                                    <td>₹4,500</td>
+                                    <td><span class="invoice-status completed">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Oct 20, 2025</td>
+                                    <td>Sneha Reddy</td>
+                                    <td>TATA AIG</td>
+                                    <td>POL-2024-67890</td>
+                                    <td>TN-09-XY-3456</td>
+                                    <td>Flat Tire</td>
+                                    <td>₹2,200</td>
+                                    <td><span class="invoice-status completed">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Settings Page -->
+            <div class="page-content" id="page-settings">
+                <div class="page-header">
+                    <div>
+                        <h1>AI Settings</h1>
+                        <p>Configure and customize your AI voice agent's behavior</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary">Reset to Default</button>
+                        <button class="btn btn-primary save-settings">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Voice & Language</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Voice Type</label>
+                                <p>Choose the voice personality for your AI agent</p>
+                            </div>
+                            <select class="setting-input">
+                                <option>Female (Professional)</option>
+                                <option>Male (Professional)</option>
+                                <option>Neutral</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Speaking Speed</label>
+                                <p>Adjust how fast your agent speaks</p>
+                            </div>
+                            <select class="setting-input">
+                                <option>Slow (Clearer)</option>
+                                <option selected>Normal</option>
+                                <option>Fast (Efficient)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Primary Language</label>
+                                <p>Default language for greeting customers</p>
+                            </div>
+                            <select class="setting-input">
+                                <option selected>English</option>
+                                <option>Hindi</option>
+                                <option>Bilingual (Auto-detect)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Greeting Message</label>
+                                <p>What customers hear when they call</p>
+                            </div>
+                            <textarea class="setting-textarea" rows="3">Thank you for calling. I'm your AI assistant. How can I help you with your roadside emergency today?</textarea>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Test Voice</label>
+                                <p>Preview how your agent will sound</p>
+                            </div>
+                            <button class="btn btn-secondary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                                Play Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Call Handling</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Auto-Transfer Emergencies</label>
+                                <p>Automatically transfer critical situations to human agents</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Collect Precise Location</label>
+                                <p>Ask for landmarks and detailed location information</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Send Confirmation SMS</label>
+                                <p>Text customers with ETA and agent details</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Call Recording</label>
+                                <p>Record all calls for quality and training purposes</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Transfer Timeout</label>
+                                <p>How long to wait before transferring unanswered calls</p>
+                            </div>
+                            <select class="setting-input">
+                                <option>30 seconds</option>
+                                <option selected>60 seconds</option>
+                                <option>90 seconds</option>
+                                <option>120 seconds</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Business Hours</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>24/7 Operation</label>
+                                <p>AI agent handles calls round the clock</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>After Hours Message</label>
+                                <p>Custom message for calls outside business hours</p>
+                            </div>
+                            <textarea class="setting-textarea" rows="2">We're currently closed. Our hours are Monday-Friday 8 AM to 6 PM.</textarea>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Advanced Settings</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Conversation Memory</label>
+                                <p>Allow AI to remember context from previous calls</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Sentiment Analysis</label>
+                                <p>Detect customer emotions and adjust responses</p>
+                            </div>
+                            <label class="toggle-switch-setting">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Webhook URL</label>
+                                <p>Send call data to your custom endpoint</p>
+                            </div>
+                            <input type="url" class="setting-input" placeholder="https://yourapi.com/webhook">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Page -->
+            <div class="page-content" id="page-team">
+                <div class="page-header">
+                    <div>
+                        <h1>Team Members</h1>
+                        <p>Manage your team and control access to the AI agent</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" onclick="document.getElementById('invite-modal').style.display='flex'">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <line x1="20" y1="8" x2="20" y2="14"/>
+                                <line x1="23" y1="11" x2="17" y2="11"/>
+                            </svg>
+                            Invite Team Member
+                        </button>
+                    </div>
+                </div>
+
+                <div class="team-grid">
+                    <div class="team-card owner">
+                        <div class="team-card-header">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=4F46E5&color=fff" alt="John Doe" class="team-avatar">
+                            <div class="team-info">
+                                <h3>John Doe</h3>
+                                <p>john@yourcompany.com</p>
+                            </div>
+                            <span class="role-badge owner-badge">Owner</span>
+                        </div>
+                        <div class="team-card-body">
+                            <div class="permission-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span>Full Access</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span>Billing & Settings</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span>Team Management</span>
+                            </div>
+                        </div>
+                        <div class="team-card-footer">
+                            <span class="join-date">Joined Oct 22, 2025</span>
+                        </div>
+                    </div>
+
+                    <!-- Empty state for additional team members -->
+                    <div class="team-card-empty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                        <h3>Invite Your Team</h3>
+                        <p>Add team members to collaborate on managing your AI agent</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('invite-modal').style.display='flex'">Invite Member</button>
+                    </div>
+                </div>
+
+                <div class="roles-section">
+                    <h2>Role Permissions</h2>
+                    <p>Understanding what each role can do</p>
+                    
+                    <div class="roles-grid">
+                        <div class="role-card">
+                            <div class="role-icon">👑</div>
+                            <h3>Owner</h3>
+                            <ul>
+                                <li>Full access to all features</li>
+                                <li>Billing and subscription management</li>
+                                <li>Add/remove team members</li>
+                                <li>Delete workspace</li>
+                            </ul>
+                        </div>
+
+                        <div class="role-card">
+                            <div class="role-icon">⚙️</div>
+                            <h3>Admin</h3>
+                            <ul>
+                                <li>Manage AI settings</li>
+                                <li>View all calls and analytics</li>
+                                <li>Add/remove members (except owner)</li>
+                                <li>Configure integrations</li>
+                            </ul>
+                        </div>
+
+                        <div class="role-card">
+                            <div class="role-icon">👤</div>
+                            <h3>Member</h3>
+                            <ul>
+                                <li>View calls and transcripts</li>
+                                <li>View analytics dashboards</li>
+                                <li>Make test calls</li>
+                                <li>No settings access</li>
+                            </ul>
+                        </div>
+
+                        <div class="role-card">
+                            <div class="role-icon">👁️</div>
+                            <h3>Viewer</h3>
+                            <ul>
+                                <li>View calls (read-only)</li>
+                                <li>View analytics (read-only)</li>
+                                <li>No configuration access</li>
+                                <li>No test calls</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help & Support Page -->
+            <div class="page-content" id="page-support">
+                <div class="page-header">
+                    <div>
+                        <h1>Help & Support</h1>
+                        <p>Get help, browse documentation, and contact our support team</p>
+                    </div>
+                </div>
+
+                <div class="support-grid">
+                    <div class="support-card featured">
+                        <div class="support-icon">💬</div>
+                        <h3>Chat with Us</h3>
+                        <p>Get instant help from our support team</p>
+                        <button class="btn btn-primary">Start Chat</button>
+                        <span class="support-meta">Usually replies in minutes</span>
+                    </div>
+
+                    <div class="support-card">
+                        <div class="support-icon">📧</div>
+                        <h3>Email Support</h3>
+                        <p>Send us a detailed message</p>
+                        <button class="btn btn-secondary">Send Email</button>
+                        <span class="support-meta">support@roadai.com</span>
+                    </div>
+
+                    <div class="support-card">
+                        <div class="support-icon">📞</div>
+                        <h3>Phone Support</h3>
+                        <p>Talk to a support specialist</p>
+                        <button class="btn btn-secondary">Call Now</button>
+                        <span class="support-meta">+91 1800-ROADAI-24</span>
+                    </div>
+                </div>
+
+                <div class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+                    
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I set up call forwarding?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>To set up call forwarding:</p>
+                                <ol>
+                                    <li>Go to your phone settings</li>
+                                    <li>Select "Call Forwarding" or "Call Settings"</li>
+                                    <li>Enter the forwarding number: +91 1800-ROADAI-24</li>
+                                    <li>Enable call forwarding</li>
+                                    <li>Test by calling your business number</li>
+                                </ol>
+                                <p>Need detailed instructions? Check our <a href="#">setup guide</a> or contact support.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Can I customize the AI's responses?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes! You can fully customize your AI agent:</p>
+                                <ul>
+                                    <li>Greeting messages</li>
+                                    <li>Voice type and speed</li>
+                                    <li>Languages supported</li>
+                                    <li>Call handling behavior</li>
+                                </ul>
+                                <p>Go to <strong>AI Settings</strong> to make changes.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How does billing work for the free trial?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Your free trial includes 30 minutes of calling time with no credit card required. After the trial:</p>
+                                <ul>
+                                    <li>You can upgrade to a paid plan to continue</li>
+                                    <li>Your AI agent will pause if you don't upgrade</li>
+                                    <li>All your data and settings are saved</li>
+                                    <li>You can upgrade anytime to reactivate</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What languages are supported?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>RoadAI Assistant supports 10+ Indian languages:</p>
+                                <ul>
+                                    <li>English and Hindi (most popular)</li>
+                                    <li>Tamil, Telugu, Bengali</li>
+                                    <li>Marathi, Gujarati</li>
+                                    <li>Kannada, Malayalam</li>
+                                    <li>Punjabi and more</li>
+                                </ul>
+                                <p>The AI can auto-detect the customer's language and switch automatically.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Can I transfer calls to human agents?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes! RoadAI supports intelligent call transfer:</p>
+                                <ul>
+                                    <li>Automatic transfer for emergencies</li>
+                                    <li>Manual transfer when customer requests</li>
+                                    <li>Transfer based on complexity</li>
+                                    <li>Configurable transfer rules</li>
+                                </ul>
+                                <p>Set up transfer rules in <strong>AI Settings</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How accurate is the AI?</h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Our AI uses advanced speech recognition and natural language processing:</p>
+                                <ul>
+                                    <li>95%+ accuracy in understanding requests</li>
+                                    <li>Works well in noisy environments</li>
+                                    <li>Handles accents and dialects</li>
+                                    <li>Continuously learning and improving</li>
+                                </ul>
+                                <p>Test it yourself with a call to see the quality!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resources-section">
+                    <h2>Resources & Documentation</h2>
+                    
+                    <div class="resources-grid">
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">📚</div>
+                            <h3>Documentation</h3>
+                            <p>Complete guides and API reference</p>
+                        </a>
+
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">🎥</div>
+                            <h3>Video Tutorials</h3>
+                            <p>Step-by-step video walkthroughs</p>
+                        </a>
+
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">💡</div>
+                            <h3>Best Practices</h3>
+                            <p>Tips to optimize your AI agent</p>
+                        </a>
+
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">🔧</div>
+                            <h3>API Reference</h3>
+                            <p>For developers and integrations</p>
+                        </a>
+
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">📊</div>
+                            <h3>Case Studies</h3>
+                            <p>See how others use RoadAI</p>
+                        </a>
+
+                        <a href="#" class="resource-card">
+                            <div class="resource-icon">🔄</div>
+                            <h3>What's New</h3>
+                            <p>Latest features and updates</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-cta">
+                    <h2>Still need help?</h2>
+                    <p>Our support team is here for you 24/7</p>
+                    <button class="btn btn-primary btn-large">Contact Support</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Invite Team Member Modal -->
+    <div id="invite-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Invite Team Member</h2>
+                <button class="modal-close" onclick="document.getElementById('invite-modal').style.display='none'">&times;</button>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="colleague@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select>
+                        <option>Admin</option>
+                        <option>Member</option>
+                        <option>Viewer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Personal Message (Optional)</label>
+                    <textarea rows="3" placeholder="Add a personal message..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('invite-modal').style.display='none'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
