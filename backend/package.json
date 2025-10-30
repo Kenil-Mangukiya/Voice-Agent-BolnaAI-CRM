@@ -2,6 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "prisma": {
+    "schema": "./public/src/prisma/schema.prisma"
+  },
   "scripts": {
     "dev": "node index.js",
     "start": "node index.js"
