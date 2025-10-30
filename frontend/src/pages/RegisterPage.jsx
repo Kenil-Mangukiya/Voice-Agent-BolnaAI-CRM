@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Upload, X, Edit2, Camera } from 'lucide-react';
+import { registerUser } from '../services/apis/authAPI';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const RegisterPage = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +68,7 @@ const RegisterPage = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -85,12 +88,27 @@ const RegisterPage = () => {
     }
 
     setErrors(newErrors);
+    setSubmitError('');
 
     if (Object.keys(newErrors).length === 0) {
-      // Here you would typically make an API call
-      console.log('Registration data:', { ...formData, avatar });
-      alert('Registration successful! (In production, this would create an account)');
-      navigate('/login');
+      setLoading(true);
+      try {
+        const response = await registerUser({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          avatar: avatar
+        });
+        
+        console.log('Registration successful:', response);
+        alert(response.message || 'Registration successful!');
+        navigate('/login');
+      } catch (error) {
+        console.error('Registration error:', error);
+        setSubmitError(error.message || 'Registration failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -258,13 +276,21 @@ const RegisterPage = () => {
             </div>
           </div>
 
+          {/* Error Message */}
+          {submitError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {submitError}
+            </div>
+          )}
+
           {/* Submit Button */}
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors shadow-md hover:shadow-lg"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>
 

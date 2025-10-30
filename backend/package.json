@@ -1,13 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "prisma": {
     "schema": "./public/src/prisma/schema.prisma"
   },
   "scripts": {
-    "dev": "node index.js",
-    "start": "node index.js"
+    "dev": "tsx index.ts",
+    "start": "tsx index.ts"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +28,7 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.2",
     "prisma": "^5.22.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
