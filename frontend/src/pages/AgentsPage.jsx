@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import AgentList from './Agents/AgentList';
-import AgentForm from './Agents/AgentForm';
-import AgentManage from './Agents/AgentManage';
+import AgentList from '../components/Agents/AgentList';
+import AgentForm from '../components/Agents/AgentForm';
+import AgentManage from '../components/Agents/AgentManage';
 
 const AgentsPage = ({ isActive }) => {
   const [mode, setMode] = useState('list'); // list | form | manage

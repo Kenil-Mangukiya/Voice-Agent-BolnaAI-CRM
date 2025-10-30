@@ -161,7 +161,7 @@ const DashboardPage = ({ isActive }) => {
       {/* Recent Activity */}
       <div className="section-header">
         <h2>Recent Activity</h2>
-        <a href="#" className="view-all">View All</a>
+        <button className="view-all-link" onClick={() => alert('View All feature coming soon!')}>View All</button>
       </div>
 
       <div className="activity-card">

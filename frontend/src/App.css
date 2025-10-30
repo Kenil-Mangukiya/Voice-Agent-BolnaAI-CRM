@@ -229,6 +229,8 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     transition: all 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
 .upgrade-btn:hover {
@@ -382,15 +384,19 @@ body {
     color: var(--text-secondary);
 }
 
-.view-all {
+.view-all, .view-all-link {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--primary-color);
     text-decoration: none;
     transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
-.view-all:hover {
+.view-all:hover, .view-all-link:hover {
     color: var(--primary-dark);
 }
 
@@ -1578,6 +1584,9 @@ input:checked + .toggle-slider:before {
     text-align: center;
     text-decoration: none;
     transition: all 0.3s;
+    display: block;
+    width: 100%;
+    cursor: pointer;
 }
 
 .resource-card:hover {

@@ -8,11 +8,6 @@ const TeamPage = ({ isActive }) => {
     message: ''
   });
 
-  const handleActionClick = (action) => {
-    console.log('Action clicked:', action);
-    alert(`"${action}" feature will be fully functional in production!`);
-  };
-
   const handleInviteSubmit = (e) => {
     e.preventDefault();
     alert('Team invitation sent! (In production, this would send an actual email)');

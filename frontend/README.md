@@ -4,6 +4,7 @@ A modern React dashboard for managing AI voice agent calls, analytics, and custo
 
 ## Features
 
+- **Authentication**: Beautiful login and registration pages with Google OAuth support
 - **Dashboard**: Overview with stats, quick actions, and setup checklist
 - **Agents**: Agent management with table view, add/edit/delete functionality
 - **Call History**: View and manage all customer calls with filtering
@@ -47,8 +48,17 @@ npm start
 ```
 src/
 ├── components/
+│   ├── Agents/             # Agent-related components
+│   │   ├── AgentList.jsx
+│   │   ├── AgentForm.jsx
+│   │   ├── AgentManage.jsx
+│   │   └── ... (other agent components)
+│   ├── Dashboard.jsx       # Main dashboard layout
 │   ├── Navbar.jsx          # Top navigation bar
-│   ├── Sidebar.jsx         # Sidebar navigation menu
+│   └── Sidebar.jsx         # Sidebar navigation menu
+├── pages/
+│   ├── LoginPage.jsx       # Login page with Google OAuth
+│   ├── RegisterPage.jsx    # Registration page with avatar upload
 │   ├── DashboardPage.jsx   # Main dashboard page
 │   ├── AgentsPage.jsx      # Agent management page
 │   ├── CallsPage.jsx       # Call history page
@@ -58,8 +68,9 @@ src/
 │   ├── SettingsPage.jsx    # AI settings page
 │   ├── TeamPage.jsx        # Team management page
 │   └── SupportPage.jsx     # Help and support page
-├── App.jsx                 # Main app component with routing
+├── App.jsx                 # Main app component with React Router
 ├── App.css                 # Global styles (converted from dashboard.css)
+├── index.css               # Tailwind CSS imports
 └── index.js                # React app entry point
 ```
 

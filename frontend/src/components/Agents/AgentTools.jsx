@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const AgentTools = ({ agent }) => {
-  const [tools, setTools] = useState([]);
 
   return (
     <div>

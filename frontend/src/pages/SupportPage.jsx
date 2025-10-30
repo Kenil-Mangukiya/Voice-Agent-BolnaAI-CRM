@@ -132,19 +132,15 @@ const SupportPage = ({ isActive }) => {
         <h2>Resources & Documentation</h2>
         <div className="resources-grid">
           {resources.map((resource, index) => (
-            <a 
+            <button 
               key={index} 
-              href="#" 
               className="resource-card"
-              onClick={(e) => {
-                e.preventDefault();
-                handleActionClick(resource.title);
-              }}
+              onClick={() => handleActionClick(resource.title)}
             >
               <div className="resource-icon">{resource.icon}</div>
               <h3>{resource.title}</h3>
               <p>{resource.description}</p>
-            </a>
+            </button>
           ))}
         </div>
       </div>

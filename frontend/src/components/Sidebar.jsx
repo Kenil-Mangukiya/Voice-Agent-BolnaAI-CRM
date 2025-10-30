@@ -131,7 +131,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
             </div>
             <span>13 of 20 calls used</span>
           </div>
-          <a href="#" className="upgrade-btn">Upgrade Plan</a>
+          <button className="upgrade-btn" onClick={() => alert('Upgrade feature coming soon!')}>Upgrade Plan</button>
         </div>
       </div>
     </aside>
