@@ -1,12 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Upload, X, Edit2, Camera } from 'lucide-react';
-import { registerUser } from '../services/apis/authAPI';
+import { registerUser, authGoogleUser } from '../services/apis/authAPI';
 import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const googleButtonRef = useRef<HTMLDivElement>(null);
+  const isGoogleScriptLoaded = useRef(false);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -14,13 +16,13 @@ const RegisterPage = () => {
     password: ''
   });
   
-  const [avatar, setAvatar] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -35,15 +37,15 @@ const RegisterPage = () => {
     }
   };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       // Validate file type
       if (file.type.startsWith('image/')) {
         setAvatar(file);
         const reader = new FileReader();
         reader.onloadend = () => {
-          setAvatarPreview(reader.result);
+          setAvatarPreview(reader.result as string);
         };
         reader.readAsDataURL(file);
       } else {
@@ -52,7 +54,7 @@ const RegisterPage = () => {
     }
   };
 
-  const handleRemoveAvatar = (e) => {
+  const handleRemoveAvatar = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setAvatar(null);
@@ -62,19 +64,21 @@ const RegisterPage = () => {
     }
   };
 
-  const handleEditAvatar = (e) => {
+  const handleEditAvatar = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     fileInputRef.current?.click();
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     // Validation
     if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
+    } else if (!/^[a-zA-Z_]+$/.test(formData.username)) {
+      newErrors.username = 'Username must contain only letters and underscores';
     }
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -83,8 +87,8 @@ const RegisterPage = () => {
     }
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length <= 5) {
+      newErrors.password = 'Password must be above 5 characters';
     }
 
     setErrors(newErrors);
@@ -96,7 +100,7 @@ const RegisterPage = () => {
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          avatar: avatar
+          avatar: avatar || undefined
         });
         
         console.log('Registration successful:', response);
@@ -104,18 +108,124 @@ const RegisterPage = () => {
         setTimeout(() => {
           navigate('/login');
         }, 1500);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Registration error:', error);
-        toast.error(error.message || 'Registration failed. Please try again.');
+        const errorMessage = error.message || 'Registration failed. Please try again.';
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
     }
   };
 
+  // Google callback handler - must be stable reference
+  const handleGoogleCallback = React.useCallback(async (response: any) => {
+    setLoading(true);
+    try {
+      // Decode the JWT token to get user info
+      const payload = JSON.parse(atob(response.credential.split('.')[1]));
+      
+      // Extract user information from Google
+      const googleEmail = payload.email;
+      const googleName = payload.name;
+      const googlePicture = payload.picture;
+
+      // Generate username from Google name (only letters and underscores)
+      const generatedUsername = googleName
+        .toLowerCase()
+        .replace(/[^a-z_]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .substring(0, 30);
+
+      // Authenticate user with Google - handles both registration and login
+      const authResponse = await authGoogleUser({
+        username: generatedUsername,
+        email: googleEmail,
+        avatar: googlePicture,
+      });
+
+      console.log('Google authentication successful:', authResponse);
+      
+      // Show appropriate message and navigate to dashboard
+      if (authResponse.isNewUser) {
+        toast.success('User registered successfully');
+      } else {
+        toast.success('User logged in successfully');
+      }
+      
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error: any) {
+      console.error('Google authentication error:', error);
+      toast.error(error.message || 'Google authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  // Handle Google login button click
   const handleGoogleLogin = () => {
-    alert('Google login feature coming soon!');
+    if (googleButtonRef.current) {
+      // Find and click the hidden Google button
+      const googleButton = googleButtonRef.current.querySelector('div[role="button"]') as HTMLElement;
+      if (googleButton) {
+        googleButton.click();
+      }
+    }
   };
+
+  // Load Google script and initialize hidden button
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      if (isGoogleScriptLoaded.current || !googleButtonRef.current) return;
+      
+      if (!window.google) {
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID && googleButtonRef.current) {
+            window.google.accounts.id.initialize({
+              client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+              callback: handleGoogleCallback,
+            });
+
+            // Render hidden Google button
+            window.google.accounts.id.renderButton(googleButtonRef.current, {
+              theme: "outline",
+              size: "large",
+              text: "continue_with",
+              width: 400,
+            });
+          }
+        };
+        script.onerror = () => {
+          console.error('Failed to load Google Sign-In script');
+        };
+        document.body.appendChild(script);
+        isGoogleScriptLoaded.current = true;
+      } else if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID && googleButtonRef.current) {
+        // Script already loaded, just initialize and render
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: handleGoogleCallback,
+        });
+
+        // Render hidden Google button
+        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          theme: "outline",
+          size: "large",
+          text: "continue_with",
+          width: 400,
+        });
+      }
+    };
+
+    loadGoogleScript();
+  }, [handleGoogleCallback]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -299,21 +409,23 @@ const RegisterPage = () => {
           </div>
 
           {/* Google Login */}
-          <div>
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-lg text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors shadow-sm hover:shadow-md"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Continue with Google
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-lg text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors shadow-sm hover:shadow-md"
+          >
+            {/* Google Icon */}
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            {/* Text: Continue with Google */}
+            <span>Continue with Google</span>
+          </button>
+          {/* Hidden Google button for programmatic trigger */}
+          <div ref={googleButtonRef} className="hidden"></div>
 
           {/* Login Link */}
           <div className="text-center">

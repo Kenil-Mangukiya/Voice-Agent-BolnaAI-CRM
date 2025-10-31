@@ -14,13 +14,10 @@ const api = axios.create({
   timeout: 15000, // 15 seconds timeout
 });
 
-// Request Interceptor - Add auth token to requests
+// Request Interceptor - Cookies are automatically sent with withCredentials: true
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Cookies are automatically included with requests due to withCredentials: true
     return config;
   },
   (error) => {
@@ -40,13 +37,17 @@ api.interceptors.response.use(
       // Server responded with error status
       const status = error.response.status;
       const message = error.response.data?.message || error.message;
+      
+      // Get the request URL to check if it's an auth endpoint
+      const requestUrl = error.config?.url || '';
+      const isAuthEndpoint = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register') || requestUrl.includes('/auth/google');
 
       switch (status) {
         case 401:
-          // Unauthorized - clear token and redirect to login
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          window.location.href = '/login';
+          // Unauthorized - redirect to login only if not already on auth pages
+          if (!isAuthEndpoint && window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
           break;
         case 403:
           console.error('Forbidden: You do not have permission to access this resource');

@@ -8,9 +8,6 @@ cloudinary.config({
     api_secret: config.cloudinaryApiSecret
 });
 
-
-console.log("Cloudinary configuration:", cloudinary.config());
-
 const uploadOnCloudinary = async (filePath: string) => {
     try {
         if (!filePath) {

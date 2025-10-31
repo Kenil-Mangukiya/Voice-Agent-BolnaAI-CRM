@@ -13,6 +13,18 @@ export interface RegisterUserData {
   avatar?: File;
 }
 
+export interface RegisterGoogleUserData {
+  username: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface LoginUserData {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+}
+
 export interface AuthResponse {
   user: {
     id: string;
@@ -49,7 +61,29 @@ export const registerUser = async (data: RegisterUserData) => {
   }
 };
 
+export const authGoogleUser = async (data: RegisterGoogleUserData) => {
+  try {
+    const response: any = await api.post('/auth/google', data);
+    console.log("Google authentication response:", response);
+    return response;
+  } catch (error) {
+    throw getErrorDetails(error);
+  }
+};
+
+export const loginUser = async (data: LoginUserData) => {
+  try {
+    const response: any = await api.post('/auth/login', data);
+    console.log("Login response:", response);
+    return response;
+  } catch (error) {
+    throw getErrorDetails(error);
+  }
+};
+
 export default {
   registerUser,
+  authGoogleUser,
+  loginUser,
 };
 

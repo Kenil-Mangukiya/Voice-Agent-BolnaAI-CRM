@@ -1,5 +1,7 @@
 import app from "./app";
 import dotenv from "dotenv";
+import config from "./public/src/config/config";
+import prisma from "./public/src/db/prisma";
 
 dotenv.config({ path: "./.env" });
 
@@ -7,18 +9,14 @@ dotenv.config({ path: "./.env" });
 const checkServerHealth = async () => {
     try {
         // Check environment variables
-        if (!process.env.PORT) {
+        if (!config.port) {
             throw new Error("PORT environment variable is not set");
         }
 
-        // Check if database connection is ready (when Prisma is set up)
-        // const { PrismaClient } = await import("@prisma/client");
-        // const prisma = new PrismaClient();
-        // await prisma.$connect();
-        
+        // Check database connection
+        await prisma.$queryRaw`SELECT 1`;
         console.log("✅ Server health check passed");
-        console.log(`📡 Port: ${process.env.PORT}`);
-        // console.log("🗄️  Database: Connected");
+        console.log("🗄️  Database: Connected");
         
         return true;
     } catch (error) {
@@ -33,8 +31,8 @@ const startServer = async () => {
         await checkServerHealth();
         
         app.listen(process.env.PORT, () => {
-            console.log(`🚀 Server is running on port ${process.env.PORT}`);
-            console.log(`🌐 http://localhost:${process.env.PORT}`);
+            console.log(`🚀 Server is running on port ${config.port}`);
+            console.log(`🌐 http://localhost:${config.port}`);
         });
     } catch (error) {
         console.error("💥 Failed to start server:", error);
