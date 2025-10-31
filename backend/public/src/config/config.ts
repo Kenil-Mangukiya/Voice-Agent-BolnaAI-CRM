@@ -8,8 +8,9 @@ const config = {
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
     googleClientId: process.env.GOOGLE_CLIENT_ID,
-    jwtSecret: process.env.JWT_SECRET || "your-secret-key-change-this-in-production",
-    bolnaAiApiKey: process.env.BOLNA_AI_API_KEY
+    jwtSecret: process.env.JWT_SECRET,
+    bolnaAiApiKey: process.env.BOLNA_AI_API_KEY,
+    bolnaAiUrl: process.env.BOLNA_AI_URL || 'https://api.bolna.ai'
 }
 
 export default config;
