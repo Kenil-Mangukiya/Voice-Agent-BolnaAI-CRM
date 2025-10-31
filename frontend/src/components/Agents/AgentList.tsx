@@ -1,91 +1,135 @@
-import React from 'react';
+import { useState } from "react";
+import { Plus, Bot } from "lucide-react";
+import { CreateAgentModal } from "./CreateAgentModel";
 
-const AgentList = ({ agents, onAdd, onOpen }) => {
+interface Agent {
+  id: string;
+  name: string;
+  useCase: string;
+  status: "active" | "inactive";
+}
+
+export const AgentsList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [agents, setAgents] = useState<Agent[]>([
+    {
+      id: "1",
+      name: "Roadside Helper",
+      useCase: "Roadside Assistance",
+      status: "active",
+    },
+  ]);
+
   return (
     <>
-      <div className="page-header">
-        <div>
-          <h1>Agents</h1>
-          <p>Manage and create your AI Agents.</p>
-        </div>
-        <div className="page-actions">
-          <button className="btn btn-primary" onClick={onAdd}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-[#4F46E5]">
+              Agents
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Manage and create your AI Agents.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-lg hover:bg-[#4338CA] hover:scale-105 transition-all duration-200 flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
             Add Agent
           </button>
-        </div>
-      </div>``
+          </div>
 
-      <div className="calls-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Agent Name</th>
-              <th>Use Case</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {agents.length === 0 ? (
-              <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '3rem' }}>
-                  <div className="empty-state">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                      <circle cx="9" cy="7" r="4"/>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                    <h3>No agents yet</h3>
-                    <p>Create your first AI agent to get started</p>
-                    <button className="btn btn-primary" onClick={onAdd}>
-                      Create Agent
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              agents.map((agent) => (
-                <tr key={agent.id}>
-                  <td>
-                    <div className="customer-cell">
-                      <div className="customer-avatar">
-                        {agent.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
-                      </div>
-                      <div>
-                        <div className="customer-name">{agent.name}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span className="issue-badge">{agent.role}</span>
-                  </td>
-                  <td>
-                    <span className={`status-badge ${agent.status === 'Active' ? 'status-completed' : 'status-missed'}`}>
-                      {agent.status}
-                    </span>
-                  </td>
-                  <td>
-                    <button 
-                      className="btn btn-secondary btn-sm"
-                      onClick={() => onOpen(agent)}
+          {agents.length === 0 ? (
+          <div className="bg-white p-12 text-center border-dashed border-2 border-gray-300 rounded-xl">
+            <Bot className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold mb-2 text-gray-900">No agents yet</h3>
+            <p className="text-gray-600 mb-6">
+              Create your first AI agent to get started
+            </p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-lg hover:bg-[#4338CA] transition-all duration-200 flex items-center gap-2 mx-auto"
+            >
+              <Plus className="h-4 w-4" />
+              Create Agent
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-lg">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left py-4 px-6 font-semibold text-sm text-gray-900">
+                      AGENT NAME
+                    </th>
+                    <th className="text-left py-4 px-6 font-semibold text-sm text-gray-900">
+                      USE CASE
+                    </th>
+                    <th className="text-left py-4 px-6 font-semibold text-sm text-gray-900">
+                      STATUS
+                    </th>
+                    <th className="text-left py-4 px-6 font-semibold text-sm text-gray-900">
+                      ACTIONS
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agents.map((agent) => (
+                    <tr
+                      key={agent.id}
+                      className="border-t border-gray-100 hover:bg-gray-50 transition-colors duration-150"
                     >
-                      Manage
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 flex items-center justify-center">
+                            <Bot className="h-5 w-5 text-[#4F46E5]" />
+                          </div>
+                          <span className="font-medium text-gray-900">{agent.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="px-3 py-1 bg-purple-100 text-[#4F46E5] rounded-full text-sm font-normal">
+                          {agent.useCase}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                            agent.status === "active"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {agent.status === "active" ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-[#4F46E5] hover:text-white hover:border-[#4F46E5] transition-all duration-200 text-sm">
+                          Manage
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          )}
+        </div>
       </div>
+
+      <CreateAgentModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onAgentCreated={(agent: Agent) => {
+          setAgents([...agents, agent]);
+          setIsModalOpen(false);
+        }}
+      />
     </>
   );
 };
-
-export default AgentList;
