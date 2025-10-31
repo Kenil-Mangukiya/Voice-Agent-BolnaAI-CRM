@@ -22,6 +22,11 @@ const GradientSlider: React.FC<GradientSliderProps> = ({
   unit = ''
 }) => {
   const percentage = ((value - min) / (max - min)) * 100;
+  
+  // Format value display based on step size
+  const displayValue = step < 1 && step > 0 
+    ? value.toFixed(2) 
+    : value.toString();
 
   return (
     <div className="w-full">
@@ -30,7 +35,7 @@ const GradientSlider: React.FC<GradientSliderProps> = ({
           {label}
         </label>
         <span className="bg-white text-gray-900 font-semibold text-sm px-3 py-1 rounded-md border border-gray-300">
-          {value}{unit}
+          {displayValue}{unit}
         </span>
       </div>
       
