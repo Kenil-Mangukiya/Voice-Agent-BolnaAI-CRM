@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import DashboardPage from '../pages/DashboardPage';
 import AgentsPage from '../pages/AgentsPage';
+import VoiceLabPage from '../pages/VoiceLabPage';
 import CallsPage from '../pages/CallsPage';
 import AnalyticsPage from '../pages/AnalyticsPage';
 import CRMPage from '../pages/CRMPage';
@@ -25,6 +26,8 @@ const Dashboard = () => {
         return <DashboardPage isActive={true} />;
       case 'agents':
         return <AgentsPage isActive={true} />;
+      case 'voice-lab':
+        return <VoiceLabPage isActive={true} />;
       case 'calls':
         return <CallsPage isActive={true} />;
       case 'analytics':

@@ -10,7 +10,7 @@ const config = {
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     jwtSecret: process.env.JWT_SECRET,
     bolnaAiApiKey: process.env.BOLNA_AI_API_KEY,
-    bolnaAiUrl: process.env.BOLNA_AI_URL || 'https://api.bolna.ai'
+    bolnaAiUrl: process.env.BOLNA_AI_URL 
 }
 
 export default config;

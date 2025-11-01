@@ -27,7 +27,7 @@ const listAgentVoices = asyncHandler(async (req: any, res: any) => {
             }
         );
 
-        console.log(`Fetched ${response.data?.length || 0} voices from Bolna`);
+        console.log(`Fetched ${response.data?.data?.length || 0} voices from Bolna`);
         
         return res.status(200).json(new apiResponse(200, "Voices fetched successfully", response.data || []));
     } catch (error: any) {
