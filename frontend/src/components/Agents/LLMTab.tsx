@@ -1,10 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { X, Plus, ExternalLink, Trash2 } from "lucide-react";
+import { X, Plus, ExternalLink, Trash2, Edit2 } from "lucide-react";
 import GradientSlider from "./GradientSlider";
 
 interface LLMTabProps {
   data: any;
   onChange: (data: any) => void;
+}
+
+interface FAQBlock {
+  id: string;
+  name: string;
+  response: string;
+  threshold: number;
+  utterances: string[];
 }
 
 // Define model variants for each provider
@@ -59,10 +67,13 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
   const currentProvider = data.llmModel || "openai";
   const currentVariant = data.llmVariant || DEFAULT_VARIANTS[currentProvider];
   const [showFaqsModal, setShowFaqsModal] = useState(false);
+  const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
+  const [savedFaqs, setSavedFaqs] = useState<FAQBlock[]>([]);
+  const [validationErrors, setValidationErrors] = useState<any>({});
   const [faqsData, setFaqsData] = useState({
     name: "",
     response: "",
-    threshold: 0.7,
+    threshold: 0.9,
     utterances: [""],
   });
 
@@ -105,26 +116,85 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
     setFaqsData({ ...faqsData, utterances: newUtterances });
   };
 
+  const handleEditFaq = (faq: FAQBlock) => {
+    setEditingFaqId(faq.id);
+    setFaqsData({
+      name: faq.name,
+      response: faq.response,
+      threshold: faq.threshold,
+      utterances: faq.utterances.length > 0 ? faq.utterances : [""],
+    });
+    setShowFaqsModal(true);
+    setValidationErrors({});
+  };
+
   const handleSaveFaqs = () => {
-    // Save the FAQs data
+    const errors: any = {};
+    
+    // Validate required fields
+    if (!faqsData.name || faqsData.name.trim() === "") {
+      errors.name = "Name is required";
+    }
+    if (!faqsData.response || faqsData.response.trim() === "") {
+      errors.response = "Response is required";
+    }
+    
+    // If there are errors, show them and don't save
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    
+    if (editingFaqId) {
+      // Update existing FAQ
+      setSavedFaqs(savedFaqs.map(faq => 
+        faq.id === editingFaqId 
+          ? {
+              id: faq.id,
+              name: faqsData.name,
+              response: faqsData.response,
+              threshold: faqsData.threshold,
+              utterances: faqsData.utterances.filter(u => u.trim() !== ""),
+            }
+          : faq
+      ));
+    } else {
+      // Save new FAQ
+      const newFaq: FAQBlock = {
+        id: Date.now().toString(),
+        name: faqsData.name,
+        response: faqsData.response,
+        threshold: faqsData.threshold,
+        utterances: faqsData.utterances.filter(u => u.trim() !== ""),
+      };
+      setSavedFaqs([...savedFaqs, newFaq]);
+    }
+    
     setShowFaqsModal(false);
-    // You can add logic here to save to parent component's data
+    setEditingFaqId(null);
+    setValidationErrors({});
     setFaqsData({
       name: "",
       response: "",
-      threshold: 0.7,
+      threshold: 0.9,
       utterances: [""],
     });
   };
 
   const handleCancelFaqs = () => {
     setShowFaqsModal(false);
+    setEditingFaqId(null);
+    setValidationErrors({});
     setFaqsData({
       name: "",
       response: "",
-      threshold: 0.7,
+      threshold: 0.9,
       utterances: [""],
     });
+  };
+
+  const handleDeleteFaq = (id: string) => {
+    setSavedFaqs(savedFaqs.filter(faq => faq.id !== id));
   };
 
   return (
@@ -210,9 +280,44 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
             Learn more <ExternalLink className="h-3 w-3" />
           </a>
         </div>
+        
+        {/* Display Saved FAQs */}
+        {savedFaqs.length > 0 && (
+          <div className="space-y-2 mb-3">
+            {savedFaqs.map((faq) => (
+              <div key={faq.id} className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleEditFaq(faq)}>
+                <div className="flex items-center gap-2 flex-1 text-sm text-gray-900">
+                  <Edit2 className="h-4 w-4" />
+                  Edit block for {faq.name}
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteFaq(faq.id);
+                  }}
+                  className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
         <button
           type="button"
-          onClick={() => setShowFaqsModal(true)}
+          onClick={() => {
+            setEditingFaqId(null);
+            setFaqsData({
+              name: "",
+              response: "",
+              threshold: 0.9,
+              utterances: [""],
+            });
+            setValidationErrors({});
+            setShowFaqsModal(true);
+          }}
           className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] transition-colors"
         >
           <Plus className="h-5 w-5" />
@@ -237,28 +342,54 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
 
               {/* Name Field */}
               <div>
-                <label className="text-sm font-semibold text-gray-900 block mb-2">Name</label>
+                <label className="text-sm font-semibold text-gray-900 block mb-2">Name <span className="text-red-600">*</span></label>
                 <input
                   type="text"
                   placeholder="Block name for FAQs & Guardrails"
                   value={faqsData.name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFaqsData({ ...faqsData, name: e.target.value })}
-                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 mt-1.5"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setFaqsData({ ...faqsData, name: e.target.value });
+                    if (validationErrors.name) {
+                      setValidationErrors({ ...validationErrors, name: undefined });
+                    }
+                  }}
+                  className={`w-full bg-white border rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 placeholder:text-gray-400 mt-1.5 ${
+                    validationErrors.name 
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                      : "border-gray-300 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                  }`}
                 />
-                <p className="text-xs text-gray-600 mt-1.5">Put a name for this block</p>
+                {validationErrors.name ? (
+                  <p className="text-xs text-red-600 mt-1.5">{validationErrors.name}</p>
+                ) : (
+                  <p className="text-xs text-gray-600 mt-1.5">Put a name for this block</p>
+                )}
               </div>
 
               {/* Response Field */}
               <div>
-                <label className="text-sm font-semibold text-gray-900 block mb-2">Response</label>
+                <label className="text-sm font-semibold text-gray-900 block mb-2">Response <span className="text-red-600">*</span></label>
                 <input
                   type="text"
                   placeholder="Forced responses for the given threshold and messages"
                   value={faqsData.response}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFaqsData({ ...faqsData, response: e.target.value })}
-                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 mt-1.5"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setFaqsData({ ...faqsData, response: e.target.value });
+                    if (validationErrors.response) {
+                      setValidationErrors({ ...validationErrors, response: undefined });
+                    }
+                  }}
+                  className={`w-full bg-white border rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 placeholder:text-gray-400 mt-1.5 ${
+                    validationErrors.response 
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                      : "border-gray-300 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                  }`}
                 />
-                <p className="text-xs text-gray-600 mt-1.5">Put a response for this block rule</p>
+                {validationErrors.response ? (
+                  <p className="text-xs text-red-600 mt-1.5">{validationErrors.response}</p>
+                ) : (
+                  <p className="text-xs text-gray-600 mt-1.5">Put a response for this block rule</p>
+                )}
               </div>
 
               {/* Threshold Field */}

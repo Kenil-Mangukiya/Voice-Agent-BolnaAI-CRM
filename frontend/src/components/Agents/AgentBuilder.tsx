@@ -97,10 +97,10 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
             onChange={(data: any) => {
               setAgentData({ ...agentData, ...data });
               // Clear validation errors when user types
-              if (data.name && validationErrors.name) {
+              if (data.hasOwnProperty('name') && validationErrors.name) {
                 setValidationErrors({ ...validationErrors, name: undefined });
               }
-              if (data.prompt && validationErrors.prompt) {
+              if (data.hasOwnProperty('prompt') && validationErrors.prompt) {
                 setValidationErrors({ ...validationErrors, prompt: undefined });
               }
             }}

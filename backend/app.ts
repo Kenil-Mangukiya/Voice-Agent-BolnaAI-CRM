@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { authRoute } from "./public/src/routes/authRoute";
 import { agentRoute } from "./public/src/routes/agentRoute";
+import voiceRoute from "./public/src/routes/voiceRoute";
 import asyncHandler from "./public/src/utils/asyncHandler";
 import apiResponse from "./public/src/utils/apiResponse";
 import prisma from "./public/src/db/prisma";
@@ -41,5 +42,6 @@ app.get("/api/health", asyncHandler(async (req, res) => {
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/agent", agentRoute);
+app.use("/api/voice", voiceRoute);
 
 export default app;
