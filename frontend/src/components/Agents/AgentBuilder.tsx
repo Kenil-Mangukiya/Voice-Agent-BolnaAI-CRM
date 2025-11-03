@@ -123,12 +123,20 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
     setIsSaving(true);
 
     try {
+      // Build custom_analytics array from customAnalyticsList
+      const custom_analytics = agentData.customAnalyticsList?.map((analytic: any) => ({
+        key: analytic.key || "",
+        type: analytic.type || "freeflow",
+        prompt: analytic.prompt || ""
+      })) || [];
+
       // Build agent_config
       const agent_config = {
         agent_name: agentData.name.trim(),
         agent_welcome_message: agentData.welcomeMessage || "Hello this is a demo call from Yogreet LLM",
         agent_type: agentData.useCase || "other",
         webhook_url: agentData.webhookUrl || null,
+        ...(custom_analytics.length > 0 && { custom_analytics }),
         tasks: [
           {
             task_type: "conversation",
@@ -146,7 +154,8 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
               trigger_user_online_message_after: agentData.invokeAfter ?? 10,
               call_terminate: agentData.callDuration ?? 300,
               hangup_after_silence: agentData.hangupOnSilence ? agentData.hangupTime : null,
-              call_hangup_message: agentData.hangupPrompt || null,
+              call_hangup_message: agentData.callHangupMessage || null,
+              call_cancellation_prompt: agentData.hangupOnPrompt ? agentData.hangupPrompt || null : null,
               voicemail_detection_time: agentData.voicemailDetection ? agentData.voicemailTime : null,
               voicemail: agentData.voicemailDetection || false,
               use_fillers: false,
@@ -171,6 +180,17 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
               llm_agent: {
                 agent_type: "simple_llm_agent",
                 agent_flow_type: "streaming",
+                ...(agentData.faqsList && agentData.faqsList.length > 0 && {
+                  routes: {
+                    embedding_model: "snowflake/snowflake-arctic-embed-m",
+                    routes: agentData.faqsList.map((faq: any) => ({
+                      route_name: faq.name,
+                      response: faq.response,
+                      utterances: faq.utterances || [],
+                      score_threshold: faq.threshold || 0.85
+                    }))
+                  }
+                }),
                 llm_config: {
                   provider: agentData.llmModel || "openai",
                   model: agentData.llmVariant || "gpt-4o-mini",
@@ -183,10 +203,7 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
                   frequency_penalty: 0,
                   family: agentData.llmModel || "openai",
                   request_json: false,
-                  agent_flow_type: "streaming",
-                  ...(agentData.customAnalyticsList && agentData.customAnalyticsList.length > 0 && {
-                    custom_analytics: agentData.customAnalyticsList
-                  })
+                  agent_flow_type: "streaming"
                 }
               },
               synthesizer: {
@@ -315,12 +332,159 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
         ]
       };
 
+      // Add summarization task if enabled
+      if (agentData.summarization) {
+        agent_config.tasks.push({
+          task_type: "summarization",
+          toolchain: {
+            execution: "parallel",
+            pipelines: [["llm"]]
+          },
+          task_config: {
+            voicemail: false,
+            use_fillers: false,
+            dtmf_enabled: false,
+            ambient_noise: false,
+            inbound_limit: -1,
+            backchanneling: false,
+            call_terminate: 90,
+            optimize_latency: true,
+            incremental_delay: 100,
+            call_hangup_message: null,
+            check_if_user_online: true,
+            hangup_after_LLMCall: false,
+            hangup_after_silence: 10,
+            call_cancellation_prompt: null,
+            disallow_unknown_numbers: false,
+            voicemail_detection_time: 2.5,
+            check_user_online_message: "Hey, are you still there",
+            backchanneling_message_gap: 5,
+            backchanneling_start_delay: 5,
+            generate_precise_transcript: false,
+            interruption_backoff_period: 100,
+            number_of_words_for_interruption: 1,
+            trigger_user_online_message_after: 10
+          } as any,
+          tools_config: {
+            input: null,
+            output: null,
+            api_tools: null,
+            llm_agent: {
+              agent_type: "simple_llm_agent",
+              agent_flow_type: "streaming",
+              llm_config: {
+                stop: null,
+                min_p: 0.1,
+                model: "gpt-4o-mini",
+                top_k: 0,
+                top_p: 0.9,
+                family: "openai",
+                routes: null,
+                base_url: null,
+                provider: "openai",
+                max_tokens: 100,
+                temperature: 0.1,
+                request_json: true,
+                agent_flow_type: "streaming",
+                presence_penalty: 0,
+                frequency_penalty: 0,
+                extraction_details: "",
+                summarization_details: null
+              }
+            },
+            synthesizer: null,
+            transcriber: null
+          } as any
+        } as any);
+      }
+
+      // Add extraction task if enabled
+      if (agentData.extraction) {
+        agent_config.tasks.push({
+          task_type: "extraction",
+          toolchain: {
+            execution: "parallel",
+            pipelines: [["llm"]]
+          },
+          task_config: {
+            voicemail: false,
+            use_fillers: false,
+            dtmf_enabled: false,
+            ambient_noise: false,
+            inbound_limit: -1,
+            backchanneling: false,
+            call_terminate: 90,
+            optimize_latency: true,
+            incremental_delay: 100,
+            call_hangup_message: null,
+            check_if_user_online: true,
+            hangup_after_LLMCall: false,
+            hangup_after_silence: 10,
+            call_cancellation_prompt: null,
+            disallow_unknown_numbers: false,
+            voicemail_detection_time: 2.5,
+            check_user_online_message: "Hey, are you still there",
+            backchanneling_message_gap: 5,
+            backchanneling_start_delay: 5,
+            generate_precise_transcript: false,
+            interruption_backoff_period: 100,
+            number_of_words_for_interruption: 1,
+            trigger_user_online_message_after: 10
+          } as any,
+          tools_config: {
+            input: null,
+            output: null,
+            api_tools: null,
+            llm_agent: {
+              agent_type: "simple_llm_agent",
+              agent_flow_type: "streaming",
+              llm_config: {
+                stop: null,
+                min_p: 0.1,
+                model: "gpt-4o-mini",
+                top_k: 0,
+                top_p: 0.9,
+                family: "openai",
+                routes: null,
+                base_url: null,
+                provider: "openai",
+                max_tokens: 100,
+                temperature: 0.1,
+                request_json: true,
+                extraction_json: agentData.extractionPrompt || "",
+                presence_penalty: 0,
+                frequency_penalty: 0,
+                extraction_details: "",
+                summarization_details: null
+              }
+            },
+            synthesizer: null,
+            transcriber: null
+          } as any
+        } as any);
+      }
+
       // Build agent_prompts
-      const agent_prompts = {
+      const agent_prompts: any = {
         task_1: {
           system_prompt: agentData.prompt
         }
       };
+
+      // Add prompts for summarization and extraction tasks
+      let taskIndex = 1;
+      if (agentData.summarization) {
+        taskIndex++;
+        agent_prompts[`task_${taskIndex}`] = {
+          system_prompt: "Summarize the conversation"
+        };
+      }
+      if (agentData.extraction) {
+        taskIndex++;
+        agent_prompts[`task_${taskIndex}`] = {
+          system_prompt: agentData.extractionPrompt || ""
+        };
+      }
 
       // Call the API
       const payload = {
@@ -458,8 +622,8 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
           <div className="flex items-center gap-2 mb-2">
             {agentData.name && <Bot className="h-5 w-5 text-[#4F46E5]" />}
             <h2 className="text-xl font-bold text-gray-900">
-              {agentData.name || "Agent Setup"}
-            </h2>
+            {agentData.name || "Agent Setup"}
+          </h2>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>{displayStep}</span>
@@ -570,22 +734,22 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
             >
               Previous Step
             </button>
-            {currentTabIndex < tabs.length - 1 ? (
-              <button
-                onClick={handleNext}
-                className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-lg hover:bg-[#4338CA] transition-all duration-200 hover:scale-[1.02] min-w-[120px]"
-              >
-                Next Step
-              </button>
-            ) : (
-              <button 
-                onClick={handleSave}
+              {currentTabIndex < tabs.length - 1 ? (
+                <button
+                  onClick={handleNext}
+                  className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-lg hover:bg-[#4338CA] transition-all duration-200 hover:scale-[1.02] min-w-[120px]"
+                >
+                  Next Step
+                </button>
+              ) : (
+                <button 
+                  onClick={handleSave}
                 disabled={isSaving}
                 className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg min-w-[120px] hover:bg-green-700 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                >
                 {isSaving ? "Saving..." : "Save Agent"}
-              </button>
-            )}
+                </button>
+              )}
           </div>
         </div>
       </div>

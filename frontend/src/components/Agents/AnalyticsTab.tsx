@@ -6,20 +6,38 @@ interface AnalyticsTabProps {
   onChange: (data: any) => void;
 }
 
+interface ListOption {
+  id: string;
+  value: string;
+  criteriaPrompt: string;
+}
+
 interface CustomAnalytic {
   id: string;
   key: string;
   type: string;
   prompt: string;
+  listOptions?: ListOption[];
+  minValue?: number;
+  maxValue?: number;
 }
 
 export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showAddOptionModal, setShowAddOptionModal] = useState(false);
+  const [editingOptionId, setEditingOptionId] = useState<string | null>(null);
+  const [optionData, setOptionData] = useState({
+    value: "",
+    criteriaPrompt: "",
+  });
   const [analyticsData, setAnalyticsData] = useState({
     key: "",
     type: "freeflow",
     prompt: "",
+    listOptions: [] as ListOption[],
+    minValue: 0,
+    maxValue: 10,
   });
 
   const customAnalytics: CustomAnalytic[] = data.customAnalyticsList || [];
@@ -41,7 +59,7 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
     }
     setShowModal(false);
     setEditingId(null);
-    setAnalyticsData({ key: "", type: "freeflow", prompt: "" });
+    setAnalyticsData({ key: "", type: "freeflow", prompt: "", listOptions: [], minValue: 0, maxValue: 10 });
   };
 
   const handleEditAnalytics = (analytic: CustomAnalytic) => {
@@ -49,9 +67,48 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
       key: analytic.key,
       type: analytic.type,
       prompt: analytic.prompt,
+      listOptions: analytic.listOptions || [],
+      minValue: analytic.minValue ?? 0,
+      maxValue: analytic.maxValue ?? 10,
     });
     setEditingId(analytic.id);
     setShowModal(true);
+  };
+
+  const handleAddOption = () => {
+    setOptionData({ value: "", criteriaPrompt: "" });
+    setEditingOptionId(null);
+    setShowAddOptionModal(true);
+  };
+
+  const handleSaveOption = () => {
+    if (!optionData.value.trim() || !optionData.criteriaPrompt.trim()) {
+      return;
+    }
+    
+    let updatedOptions: ListOption[];
+    if (editingOptionId) {
+      updatedOptions = analyticsData.listOptions.map(opt =>
+        opt.id === editingOptionId
+          ? { id: opt.id, value: optionData.value, criteriaPrompt: optionData.criteriaPrompt }
+          : opt
+      );
+    } else {
+      updatedOptions = [
+        ...analyticsData.listOptions,
+        { id: Date.now().toString(), value: optionData.value, criteriaPrompt: optionData.criteriaPrompt }
+      ];
+    }
+    
+    setAnalyticsData({ ...analyticsData, listOptions: updatedOptions });
+    setShowAddOptionModal(false);
+    setEditingOptionId(null);
+    setOptionData({ value: "", criteriaPrompt: "" });
+  };
+
+  const handleDeleteOption = (optionId: string) => {
+    const updatedOptions = analyticsData.listOptions.filter(opt => opt.id !== optionId);
+    setAnalyticsData({ ...analyticsData, listOptions: updatedOptions });
   };
 
   const handleDeleteAnalytics = (id: string) => {
@@ -143,7 +200,7 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
             onClick={() => {
               setShowModal(true);
               setEditingId(null);
-              setAnalyticsData({ key: "", type: "freeflow", prompt: "" });
+              setAnalyticsData({ key: "", type: "freeflow", prompt: "", listOptions: [], minValue: 0, maxValue: 10 });
             }}
             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold flex items-center justify-center gap-2"
           >
@@ -250,7 +307,19 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
                 <select
                   id="analytics-type"
                   value={analyticsData.type}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAnalyticsData({ ...analyticsData, type: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newType = e.target.value;
+                    if (newType === "list") {
+                      // Keep listOptions when switching to list
+                      setAnalyticsData({ ...analyticsData, type: newType, minValue: 0, maxValue: 10 });
+                    } else if (newType === "numeric") {
+                      // Clear listOptions when switching to numeric
+                      setAnalyticsData({ ...analyticsData, type: newType, listOptions: [] });
+                    } else {
+                      // Clear both when switching to freeflow
+                      setAnalyticsData({ ...analyticsData, type: newType, listOptions: [], minValue: 0, maxValue: 10 });
+                    }
+                  }}
                   className="w-full h-12 bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
                 >
                   <option value="freeflow">Freeflow</option>
@@ -269,6 +338,104 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
                   className="w-full min-h-[120px] bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-y font-mono text-sm"
                 />
               </div>
+
+              {/* List Options Section */}
+              {analyticsData.type === "list" && (
+                <div className="border-t border-gray-200 pt-4">
+                  <label className="text-sm font-semibold text-gray-900 block mb-3">List Options</label>
+                  
+                  {/* Display existing options */}
+                  {analyticsData.listOptions.length > 0 && (
+                    <div className="space-y-3 mb-4">
+                      {analyticsData.listOptions.map((option) => (
+                        <div key={option.id} className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                          <div className="flex-1 grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-xs text-gray-600 block mb-1">Value</label>
+                              <input
+                                type="text"
+                                placeholder="e.g. 'positive'"
+                                value={option.value}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                  const updatedOptions = analyticsData.listOptions.map(opt =>
+                                    opt.id === option.id
+                                      ? { ...opt, value: e.target.value }
+                                      : opt
+                                  );
+                                  setAnalyticsData({ ...analyticsData, listOptions: updatedOptions });
+                                }}
+                                className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-600 block mb-1">Criteria Prompt</label>
+                              <input
+                                type="text"
+                                placeholder="e.g. 'If sentiment is positive'"
+                                value={option.criteriaPrompt}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                  const updatedOptions = analyticsData.listOptions.map(opt =>
+                                    opt.id === option.id
+                                      ? { ...opt, criteriaPrompt: e.target.value }
+                                      : opt
+                                  );
+                                  setAnalyticsData({ ...analyticsData, listOptions: updatedOptions });
+                                }}
+                                className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-2 pt-6">
+                            <button
+                              onClick={() => handleDeleteOption(option.id)}
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleAddOption}
+                    className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Option
+                  </button>
+                </div>
+              )}
+
+              {/* Numeric Options Section */}
+              {analyticsData.type === "numeric" && (
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="min-value" className="text-sm font-semibold text-gray-900 block mb-2">Minimum Value</label>
+                      <input
+                        id="min-value"
+                        type="number"
+                        value={analyticsData.minValue}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAnalyticsData({ ...analyticsData, minValue: parseInt(e.target.value) || 0 })}
+                        className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="max-value" className="text-sm font-semibold text-gray-900 block mb-2">Maximum Value</label>
+                      <input
+                        id="max-value"
+                        type="number"
+                        value={analyticsData.maxValue}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAnalyticsData({ ...analyticsData, maxValue: parseInt(e.target.value) || 10 })}
+                        className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
@@ -280,6 +447,68 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
               </button>
               <button
                 onClick={handleSaveAnalytics}
+                className="px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#4338CA] transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Add Option Modal */}
+    {showAddOptionModal && (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setShowAddOptionModal(false)}>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-xl max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">
+                {editingOptionId ? "Edit Option" : "Add Option"}
+              </h3>
+              <button
+                onClick={() => setShowAddOptionModal(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="option-value" className="text-sm font-semibold text-gray-900 block mb-2">Value</label>
+                <input
+                  id="option-value"
+                  type="text"
+                  placeholder="e.g. 'positive'"
+                  value={optionData.value}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOptionData({ ...optionData, value: e.target.value })}
+                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="option-criteria" className="text-sm font-semibold text-gray-900 block mb-2">Criteria Prompt</label>
+                <input
+                  id="option-criteria"
+                  type="text"
+                  placeholder="e.g. 'If sentiment is positive'"
+                  value={optionData.criteriaPrompt}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOptionData({ ...optionData, criteriaPrompt: e.target.value })}
+                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setShowAddOptionModal(false)}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveOption}
                 className="px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#4338CA] transition-colors"
               >
                 Save

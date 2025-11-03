@@ -68,7 +68,7 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
   const currentVariant = data.llmVariant || DEFAULT_VARIANTS[currentProvider];
   const [showFaqsModal, setShowFaqsModal] = useState(false);
   const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
-  const [savedFaqs, setSavedFaqs] = useState<FAQBlock[]>([]);
+  const [savedFaqs, setSavedFaqs] = useState<FAQBlock[]>(data.faqsList || []);
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [faqsData, setFaqsData] = useState({
     name: "",
@@ -145,9 +145,10 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
       return;
     }
     
+    let updatedFaqs: FAQBlock[];
     if (editingFaqId) {
       // Update existing FAQ
-      setSavedFaqs(savedFaqs.map(faq => 
+      updatedFaqs = savedFaqs.map(faq => 
         faq.id === editingFaqId 
           ? {
               id: faq.id,
@@ -157,7 +158,7 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
               utterances: faqsData.utterances.filter(u => u.trim() !== ""),
             }
           : faq
-      ));
+      );
     } else {
       // Save new FAQ
       const newFaq: FAQBlock = {
@@ -167,8 +168,12 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
         threshold: faqsData.threshold,
         utterances: faqsData.utterances.filter(u => u.trim() !== ""),
       };
-      setSavedFaqs([...savedFaqs, newFaq]);
+      updatedFaqs = [...savedFaqs, newFaq];
     }
+    
+    setSavedFaqs(updatedFaqs);
+    // Update agentData with FAQs
+    onChange({ faqsList: updatedFaqs });
     
     setShowFaqsModal(false);
     setEditingFaqId(null);
@@ -194,7 +199,10 @@ export const LLMTab = ({ data, onChange }: LLMTabProps) => {
   };
 
   const handleDeleteFaq = (id: string) => {
-    setSavedFaqs(savedFaqs.filter(faq => faq.id !== id));
+    const updatedFaqs = savedFaqs.filter(faq => faq.id !== id);
+    setSavedFaqs(updatedFaqs);
+    // Update agentData when FAQ is deleted
+    onChange({ faqsList: updatedFaqs });
   };
 
   return (

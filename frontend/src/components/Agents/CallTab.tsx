@@ -146,6 +146,21 @@ export const CallTab = ({ data, onChange }: CallTabProps) => {
               />
             </div>
           )}
+
+          {/* Call hangup message field */}
+          <div className="mt-4">
+            <label htmlFor="call-hangup-message" className="text-sm font-semibold text-gray-900 block mb-2">Call hangup message</label>
+            <textarea
+              id="call-hangup-message"
+              placeholder="Call will disconnect now"
+              value={data.callHangupMessage || ""}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange({ callHangupMessage: e.target.value })}
+              className="w-full min-h-[80px] bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-y mt-1.5"
+            />
+            <p className="text-xs text-gray-600 mt-1.5">
+              Provide the final agent message just before hanging up.
+            </p>
+          </div>
         </div>
       </div>
 

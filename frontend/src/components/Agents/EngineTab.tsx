@@ -112,7 +112,7 @@ export const EngineTab = ({ data, onChange }: EngineTabProps) => {
                 <textarea
                   id="online-message"
                   placeholder="Hey, are you still there"
-                  value={data.onlineMessage || "Hey, are you still there"}
+                  value={data.onlineMessage || ""}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange({ onlineMessage: e.target.value })}
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-none mt-1.5"
                   rows={2}

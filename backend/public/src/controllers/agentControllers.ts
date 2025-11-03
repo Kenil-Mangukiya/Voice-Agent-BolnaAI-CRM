@@ -360,7 +360,7 @@ const getAllAgents = asyncHandler(async (req: any, res: any) => {
 
 const getAgentById = asyncHandler(async (req: any, res: any) => {
     // Use hardcoded agent ID for now as requested
-    const agentId = "01338a59-87f0-4376-b928-41c19c93f200";
+    const agentId = "14099fba-b96e-426c-9fab-94883c0b70e8";
     const userId = req.userId;
 
     // Validate common requirements (authentication, API key)
