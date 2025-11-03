@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Bot } from "lucide-react";
 import { CreateAgentModal } from "./CreateAgentModel";
+import { getAgentById } from "../../services/apis/agentAPI";
 
 interface Agent {
   id: string;
@@ -19,6 +20,20 @@ export const AgentsList = () => {
       status: "active",
     },
   ]);
+
+  // Fetch agent details on mount
+  useEffect(() => {
+    const fetchAgentDetails = async () => {
+      try {
+        const agentData = await getAgentById();
+        console.log('Fetched agent details:', agentData);
+      } catch (error) {
+        console.error('Error fetching agent details:', error);
+      }
+    };
+
+    fetchAgentDetails();
+  }, []);
 
   return (
     <>

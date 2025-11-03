@@ -44,6 +44,23 @@ const createAgent = asyncHandler(async (req: any, res: any) => {
     };
 
     try {
+        // Log the full payload being sent to Bolna API
+        console.log('='.repeat(80));
+        console.log('PAYLOAD BEING SENT TO BOLNA API:');
+        console.log('='.repeat(80));
+        console.log(JSON.stringify(agentData, null, 2));
+        console.log('='.repeat(80));
+        
+        // Log synthesizer config specifically
+        if (agent_config?.tasks?.[0]?.tools_config?.synthesizer) {
+            console.log('Synthesizer Config:');
+            console.log(JSON.stringify({
+                provider: agent_config.tasks[0].tools_config.synthesizer.provider,
+                provider_config: agent_config.tasks[0].tools_config.synthesizer.provider_config,
+                buffer_size: agent_config.tasks[0].tools_config.synthesizer.buffer_size
+            }, null, 2));
+        }
+        
         // Make request to Bolna AI API
         const response = await axios.post(
             `${config.bolnaAiUrl}/v2/agent`,
@@ -96,12 +113,20 @@ const createAgent = asyncHandler(async (req: any, res: any) => {
             user: savedAgent.user
         }));
     } catch (error: any) {
-        console.error('Error creating agent:', error);
+        console.error('='.repeat(80));
+        console.error('ERROR CREATING AGENT IN BOLNA:');
+        console.error('='.repeat(80));
         
         // Handle axios errors
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
+            console.error('Bolna API Error Response:');
+            console.error('Status:', error.response.status);
+            console.error('Status Text:', error.response.statusText);
+            console.error('Error Data:', JSON.stringify(error.response.data, null, 2));
+            console.error('='.repeat(80));
+            
             const errorMessage = error.response.data?.message || error.response.data?.error || 'Failed to create agent';
             const statusCode = error.response.status || 500;
             return res.status(statusCode).json(new apiError(statusCode, errorMessage, [], ""));
@@ -332,4 +357,45 @@ const getAllAgents = asyncHandler(async (req: any, res: any) => {
     }
 });
 
-export { createAgent, updateAgent, deleteAgent, getAllAgents };
+const getAgentById = asyncHandler(async (req: any, res: any) => {
+    // Use hardcoded agent ID for now as requested
+    const agentId = "01338a59-87f0-4376-b928-41c19c93f200";
+    const userId = req.userId;
+
+    // Validate common requirements (authentication, API key)
+    const validationError = validateAgentRequest(userId);
+    if (validationError) {
+        return res.status(validationError.status).json(validationError.error);
+    }
+
+    try {
+        // Make request to Bolna AI API to get agent details
+        const response = await axios.get(
+            `${config.bolnaAiUrl}/v2/agent/${agentId}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${config.bolnaAiApiKey}`
+                }
+            }
+        );
+
+        console.log(`Fetched agent details for ID: ${agentId}`);
+        
+        return res.status(200).json(new apiResponse(200, "Agent fetched successfully", response.data || {}));
+    } catch (error: any) {
+        console.error('Error fetching agent:', error);
+        
+        // Handle axios errors
+        if (error.response) {
+            const errorMessage = error.response.data?.message || error.response.data?.error || 'Failed to fetch agent';
+            const statusCode = error.response.status || 500;
+            return res.status(statusCode).json(new apiError(statusCode, errorMessage, [], ""));
+        } else if (error.request) {
+            return res.status(503).json(new apiError(503, "No response from Bolna AI service", [], ""));
+        } else {
+            return res.status(500).json(new apiError(500, error.message || "Error setting up request to Bolna AI", [], ""));
+        }
+    }
+});
+
+export { createAgent, updateAgent, deleteAgent, getAllAgents, getAgentById };

@@ -135,9 +135,20 @@ export const getAllAgents = async (): Promise<BolnaAgent[]> => {
   }
 };
 
+export const getAgentById = async (agentId?: string): Promise<any> => {
+  try {
+    const response: any = await api.get(`/agent/${agentId || 'dummy'}`);
+    console.log('Get agent by ID response:', response);
+    return response.data || {};
+  } catch (error) {
+    throw getErrorDetails(error);
+  }
+};
+
 export default {
   createAgent,
   updateAgent,
   deleteAgent,
   getAllAgents,
+  getAgentById,
 };

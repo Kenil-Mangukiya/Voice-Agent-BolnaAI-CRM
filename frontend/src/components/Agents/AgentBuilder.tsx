@@ -7,6 +7,7 @@ import { EngineTab } from "./EngineTab";
 import { CallTab } from "./CallTab";
 import { ToolsTab } from "./ToolsTab";
 import { AnalyticsTab } from "./AnalyticsTab";
+import { createAgent } from "../../services/apis/agentAPI";
 
 interface AgentBuilderProps {
   mode: "scratch" | "template";
@@ -43,6 +44,7 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
     welcomeMessage: "Hello this is a demo call from Yogreet LLM"
   });
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [isSaving, setIsSaving] = useState(false);
 
   const currentTabIndex = tabs.findIndex((tab) => tab.id === currentTab);
   const completedCount = tabs.filter((tab) => tab.completed).length;
@@ -92,14 +94,228 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
     }
   };
 
-  const handleSave = () => {
-    const agent = {
-      id: Date.now().toString(),
-      name: agentData.name || "New Agent",
-      useCase: agentData.useCase || "Custom Agent",
-      status: "active" as const,
-    };
-    onSave(agent);
+  const handleSave = async () => {
+    // Validate required fields
+    const errors: any = {};
+    if (!agentData.name || !agentData.name.trim()) {
+      errors.name = "Agent name is required";
+    }
+    if (!agentData.prompt || !agentData.prompt.trim()) {
+      errors.prompt = "Prompt is required";
+    }
+    if (!agentData.selectedVoiceId || !agentData.selectedVoiceId.trim()) {
+      errors.voice = "Voice selection is required";
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      // Navigate to the audio tab if voice is missing
+      if (errors.voice) {
+        setCurrentTab("audio");
+      }
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      // Build agent_config
+      const agent_config = {
+        agent_name: agentData.name.trim(),
+        agent_welcome_message: agentData.welcomeMessage || "Hello this is a demo call from Yogreet LLM",
+        agent_type: agentData.useCase || "other",
+        webhook_url: agentData.webhookUrl || null,
+        tasks: [
+          {
+            task_type: "conversation",
+            toolchain: {
+              execution: "parallel",
+              pipelines: [
+                ["transcriber", "llm", "synthesizer"]
+              ]
+            },
+            task_config: {
+              generate_precise_transcript: agentData.generatePreciseTranscript || false,
+              number_of_words_for_interruption: agentData.interruptionThreshold ?? 5,
+              check_if_user_online: agentData.userOnlineCheck !== false,
+              check_user_online_message: agentData.onlineMessage || "Hey, are you still there",
+              trigger_user_online_message_after: agentData.invokeAfter ?? 10,
+              call_terminate: agentData.callDuration ?? 300,
+              hangup_after_silence: agentData.hangupOnSilence ? agentData.hangupTime : null,
+              call_hangup_message: agentData.hangupPrompt || null,
+              voicemail_detection_time: agentData.voicemailDetection ? agentData.voicemailTime : null,
+              voicemail: agentData.voicemailDetection || false,
+              use_fillers: false,
+              dtmf_enabled: false,
+              ambient_noise: false,
+              inbound_limit: -1,
+              backchanneling: false,
+              optimize_latency: true,
+              incremental_delay: 200,
+              hangup_after_LLMCall: false,
+            },
+            tools_config: {
+              input: {
+                format: "wav",
+                provider: agentData.telephonyProvider || "plivo"
+              },
+              output: {
+                format: "wav",
+                provider: agentData.telephonyProvider || "plivo"
+              },
+              api_tools: agentData.selectedTools || null,
+              llm_agent: {
+                agent_type: "simple_llm_agent",
+                agent_flow_type: "streaming",
+                llm_config: {
+                  provider: agentData.llmModel || "openai",
+                  model: agentData.llmVariant || "gpt-4o-mini",
+                  temperature: agentData.temperature || 0.7,
+                  max_tokens: agentData.tokens || 4096,
+                  top_p: 0.9,
+                  top_k: 0,
+                  min_p: 0.1,
+                  presence_penalty: 0,
+                  frequency_penalty: 0,
+                  family: agentData.llmModel || "openai",
+                  request_json: false,
+                  agent_flow_type: "streaming",
+                  ...(agentData.customAnalyticsList && agentData.customAnalyticsList.length > 0 && {
+                    custom_analytics: agentData.customAnalyticsList
+                  })
+                }
+              },
+              synthesizer: {
+                stream: true,
+                caching: true,
+                provider: (() => {
+                  // Normalize provider name - Bolna API expects lowercase
+                  return (agentData.voiceProvider || "elevenlabs").toLowerCase();
+                })(),
+                buffer_size: agentData.bufferSize || 400,
+                audio_format: "wav",
+                provider_config: (() => {
+                  const provider = (agentData.voiceProvider || "elevenlabs").toLowerCase();
+                  
+                  switch (provider) {
+                    case 'elevenlabs':
+                      // ElevenLabs format with dynamic values
+                      return {
+                        model: agentData.voiceModel || "eleven_turbo_v2_5",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        voice_id: agentData.voiceId || "",
+                        temperature: agentData.voiceTemperature || 0.5,
+                        similarity_boost: agentData.similarityBoost || 0.5
+                      };
+                    case 'rime':
+                      // Rime uses ONLY voice_id and model
+                      return {
+                        voice_id: agentData.voiceId || "",
+                        model: agentData.voiceModel || ""
+                      };
+                    case 'polly':
+                      // Polly format
+                      return {
+                        voice: agentData.voice || "",
+                        language: agentData.languageCode || "en-US",
+                        engine: agentData.voiceModel || "neural",
+                        speed: agentData.speedRate || 1.0
+                      };
+                    case 'azuretts':
+                    case 'google':
+                    case 'deepgram':
+                    case 'sarvam':
+                    case 'smallest':
+                      const config: any = {
+                        voice_id: agentData.voiceId || ""
+                      };
+                      if (agentData.speedRate && agentData.speedRate !== 1.0) {
+                        config.speed = agentData.speedRate;
+                      }
+                      return config;
+                    case 'inworld':
+                      const inworldConfig: any = {
+                        voice: agentData.voice || ""
+                      };
+                      if (agentData.speedRate && agentData.speedRate !== 1.0) {
+                        inworldConfig.speed = agentData.speedRate;
+                      }
+                      return inworldConfig;
+                    default:
+                      // Default to ElevenLabs format
+                      return {
+                        model: agentData.voiceModel || "eleven_turbo_v2_5",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        voice_id: agentData.voiceId || "",
+                        temperature: agentData.voiceTemperature || 0.5,
+                        similarity_boost: agentData.similarityBoost || 0.5
+                      };
+                  }
+                })()
+              },
+              transcriber: {
+                task: "transcribe",
+                model: agentData.languageModel || "nova-2",
+                stream: true,
+                encoding: "linear16",
+                keywords: agentData.keywords || "",
+                language: agentData.languageCode || "en-IN",
+                provider: agentData.languageProvider || "deepgram",
+                endpointing: 100,
+                sampling_rate: 16000
+              }
+            }
+          }
+        ]
+      };
+
+      // Build agent_prompts
+      const agent_prompts = {
+        task_1: {
+          system_prompt: agentData.prompt
+        }
+      };
+
+      // Call the API
+      const payload = {
+        agent_config,
+        agent_prompts
+      };
+
+      // Debug: Log the payload structure
+      console.log('Sending agent creation payload:', JSON.stringify(payload, null, 2));
+      console.log('Agent name:', agent_config.agent_name);
+      console.log('Agent type:', agent_config.agent_type);
+      console.log('Voice Provider:', agentData.voiceProvider);
+      console.log('Synthesizer Config:', JSON.stringify({
+        provider: agent_config.tasks[0].tools_config.synthesizer.provider,
+        provider_config: agent_config.tasks[0].tools_config.synthesizer.provider_config,
+        buffer_size: agent_config.tasks[0].tools_config.synthesizer.buffer_size
+      }, null, 2));
+
+      const response = await createAgent(payload as any);
+      console.log('Agent created successfully:', response);
+      
+      // Extract agent data from response
+      // Backend returns: { success, statusCode, message, data: { id, bolnaAgentId, agentName, ... } }
+      // API interceptor already extracts response.data, so response is the full backend response
+      const agentResponseData = response?.data || {};
+      
+      // Call the onSave callback with the response
+      onSave({
+        id: agentResponseData.id || agentResponseData.bolnaAgentId || Date.now().toString(),
+        name: agentResponseData.agentName || agentData.name,
+        useCase: agentResponseData.agentType || agentData.useCase || "other",
+        status: (agentResponseData.status || "active") as "active" | "inactive",
+      });
+    } catch (error: any) {
+      console.error('Error creating agent:', error);
+      alert(error.message || 'Failed to create agent. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const renderTabContent = () => {
@@ -285,9 +501,10 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
             ) : (
               <button 
                 onClick={handleSave}
-                className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg min-w-[120px] hover:bg-green-700 transition-all duration-200 hover:scale-[1.02]"
+                disabled={isSaving}
+                className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg min-w-[120px] hover:bg-green-700 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save Agent
+                {isSaving ? "Saving..." : "Save Agent"}
               </button>
             )}
           </div>
