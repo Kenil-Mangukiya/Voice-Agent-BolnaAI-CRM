@@ -45,7 +45,9 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const currentTabIndex = tabs.findIndex((tab) => tab.id === currentTab);
-  const progressPercentage = ((currentTabIndex + 1) / tabs.length) * 100;
+  const completedCount = tabs.filter((tab) => tab.completed).length;
+  const progressPercentage = (completedCount / tabs.length) * 100;
+  const displayStep = `${completedCount} of ${tabs.length}`;
 
   const markTabComplete = (tabId: TabId) => {
     setTabs((prev) =>
@@ -62,6 +64,18 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
       }
       if (!agentData.prompt || agentData.prompt.trim() === "") {
         errors.prompt = "Prompt is required";
+      }
+      
+      if (Object.keys(errors).length > 0) {
+        setValidationErrors(errors);
+        return;
+      }
+    }
+    
+    if (currentTab === "audio") {
+      const errors: any = {};
+      if (!agentData.selectedVoiceId || agentData.selectedVoiceId.trim() === "") {
+        errors.voice = "Voice is required";
       }
       
       if (Object.keys(errors).length > 0) {
@@ -118,7 +132,15 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
         return (
           <AudioTab
             data={agentData}
-            onChange={(data: any) => setAgentData({ ...agentData, ...data })}
+            onChange={(data: any) => {
+              setAgentData({ ...agentData, ...data });
+              // Clear validation errors when user selects a voice
+              if (data.hasOwnProperty('selectedVoiceId') && validationErrors.voice) {
+                setValidationErrors({ ...validationErrors, voice: undefined });
+              }
+            }}
+            onClose={onClose}
+            errors={validationErrors}
           />
         );
       case "engine":
@@ -166,7 +188,7 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
             </h2>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span>{currentTabIndex + 1} of {tabs.length}</span>
+            <span>{displayStep}</span>
             <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#4F46E5] transition-all duration-500"

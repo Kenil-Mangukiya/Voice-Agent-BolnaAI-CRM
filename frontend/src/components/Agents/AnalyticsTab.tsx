@@ -1,24 +1,62 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, Edit2, Trash2, Plus } from "lucide-react";
 
 interface AnalyticsTabProps {
   data: any;
   onChange: (data: any) => void;
 }
 
+interface CustomAnalytic {
+  id: string;
+  key: string;
+  type: string;
+  prompt: string;
+}
+
 export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [analyticsData, setAnalyticsData] = useState({
     key: "",
     type: "freeflow",
     prompt: "",
   });
 
+  const customAnalytics: CustomAnalytic[] = data.customAnalyticsList || [];
+
   const handleSaveAnalytics = () => {
-    // Save logic here
-    onChange({ customAnalytics: analyticsData });
+    if (editingId) {
+      // Update existing analytics
+      const updated = customAnalytics.map(a => 
+        a.id === editingId ? { ...analyticsData, id: editingId } : a
+      );
+      onChange({ customAnalyticsList: updated });
+    } else {
+      // Add new analytics
+      const newAnalytic: CustomAnalytic = {
+        id: Date.now().toString(),
+        ...analyticsData
+      };
+      onChange({ customAnalyticsList: [...customAnalytics, newAnalytic] });
+    }
     setShowModal(false);
+    setEditingId(null);
     setAnalyticsData({ key: "", type: "freeflow", prompt: "" });
+  };
+
+  const handleEditAnalytics = (analytic: CustomAnalytic) => {
+    setAnalyticsData({
+      key: analytic.key,
+      type: analytic.type,
+      prompt: analytic.prompt,
+    });
+    setEditingId(analytic.id);
+    setShowModal(true);
+  };
+
+  const handleDeleteAnalytics = (id: string) => {
+    const updated = customAnalytics.filter(a => a.id !== id);
+    onChange({ customAnalyticsList: updated });
   };
 
   return (
@@ -82,17 +120,13 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
           {data.extraction && (
             <div className="ml-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <label htmlFor="extraction-prompt" className="text-sm font-semibold text-gray-900 block mb-2">Extraction Prompt</label>
-              <input
+              <textarea
                 id="extraction-prompt"
-                type="text"
-                placeholder="Cost name : Valid the name of the user"
+                placeholder="user_name: Yield the name of the user.&#10;payment_mode: If user is paying by cash, yield cash. If they are paying by card yield card. Else yield NA"
                 value={data.extractionPrompt || ""}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange({ extractionPrompt: e.target.value })}
-                className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 mt-2"
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange({ extractionPrompt: e.target.value })}
+                className="w-full min-h-[120px] bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-y font-mono text-sm"
               />
-              <p className="text-xs text-gray-600 mt-2">
-                If user is paying for card. Card. Cost yield: NA
-              </p>
             </div>
           )}
         </div>
@@ -104,13 +138,60 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
           Add call tasks to extract data from the call
         </p>
 
-        <div className="border-t border-gray-200 pt-4">
+        <div className="border-t border-gray-200 pt-4 space-y-4">
           <button 
-            onClick={() => setShowModal(true)}
-            className="text-sm text-[#4F46E5] hover:underline"
+            onClick={() => {
+              setShowModal(true);
+              setEditingId(null);
+              setAnalyticsData({ key: "", type: "freeflow", prompt: "" });
+            }}
+            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold flex items-center justify-center gap-2"
           >
-            + Extract custom analytics
+            <Plus className="w-5 h-5" />
+            Extract custom analytics
           </button>
+
+          {/* Display saved custom analytics */}
+          {customAnalytics.length > 0 && (
+            <div className="space-y-3 mt-4">
+              {customAnalytics.map((analytic) => (
+                <div
+                  key={analytic.id}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-bold text-gray-900">{analytic.key}</span>
+                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full border border-purple-200">
+                          {analytic.type === 'freeflow' ? 'Freeflow' : analytic.type === 'list' ? 'List' : analytic.type === 'numeric' ? 'Numeric' : analytic.type}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 font-mono bg-gray-50 p-2 rounded border border-gray-200 whitespace-pre-wrap">
+                        {analytic.prompt}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => handleEditAnalytics(analytic)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAnalytics(analytic.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -172,8 +253,9 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAnalyticsData({ ...analyticsData, type: e.target.value })}
                   className="w-full h-12 bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
                 >
-                  <option value="freeflow">Freeflow (default)</option>
-                  <option value="structured">Structured</option>
+                  <option value="freeflow">Freeflow</option>
+                  <option value="list">List</option>
+                  <option value="numeric">Numeric</option>
                 </select>
               </div>
 
@@ -181,10 +263,10 @@ export const AnalyticsTab = ({ data, onChange }: AnalyticsTabProps) => {
                 <label htmlFor="analytics-prompt" className="text-sm font-semibold text-gray-900 block mb-2">Prompt for this analytics</label>
                 <textarea
                   id="analytics-prompt"
-                  placeholder="e.g. 'Analyze the sentiment of the conversation and provide a score from -1 to 1. Only reply with score, either 1 or -1.'"
+                  placeholder="user_name: Yield the name of the user.&#10;payment_mode: If user is paying by cash, yield cash. If they are paying by card yield card. Else yield NA"
                   value={analyticsData.prompt}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAnalyticsData({ ...analyticsData, prompt: e.target.value })}
-                  className="w-full min-h-[120px] bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-y"
+                  className="w-full min-h-[120px] bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] placeholder:text-gray-400 resize-y font-mono text-sm"
                 />
               </div>
             </div>

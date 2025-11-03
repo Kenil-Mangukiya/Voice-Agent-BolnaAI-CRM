@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Play } from "lucide-react";
 import GradientSlider from "./GradientSlider";
+import { getMyVoices, type BolnaVoice } from "../../services/apis/agentVoiceAPI";
 
 interface AudioTabProps {
   data: any;
   onChange: (data: any) => void;
+  onClose?: () => void;
+  errors?: any;
 }
 
 // Define language codes based on the provided images
@@ -115,9 +117,12 @@ const DEFAULT_LANGUAGES: Record<string, string> = {
   assembly: "English",
 };
 
-export const AudioTab = ({ data, onChange }: AudioTabProps) => {
+export const AudioTab = ({ data, onChange, onClose, errors }: AudioTabProps) => {
   const currentProvider = data.languageProvider || "deepgram";
   const currentLanguage = data.language || DEFAULT_LANGUAGES[currentProvider];
+  
+  const [userVoices, setUserVoices] = useState<BolnaVoice[]>([]);
+  const [voicesLoading, setVoicesLoading] = useState(true);
 
   // Get available models for the current provider
   const availableModels = useMemo(() => {
@@ -128,6 +133,22 @@ export const AudioTab = ({ data, onChange }: AudioTabProps) => {
   const availableLanguages = useMemo(() => {
     return PROVIDER_LANGUAGES[currentProvider] || [];
   }, [currentProvider]);
+  
+  // Fetch user's voices on mount
+  useEffect(() => {
+    const fetchVoices = async () => {
+      try {
+        const voices = await getMyVoices();
+        setUserVoices(voices);
+      } catch (error) {
+        console.error('Error fetching voices:', error);
+      } finally {
+        setVoicesLoading(false);
+      }
+    };
+    
+    fetchVoices();
+  }, []);
 
   // When provider changes, update the model and language to the defaults for that provider
   useEffect(() => {
@@ -253,49 +274,62 @@ export const AudioTab = ({ data, onChange }: AudioTabProps) => {
         <h3 className="text-lg font-semibold mb-4 text-gray-900">Select voice</h3>
         <div className="space-y-4">
           <div>
-            <label htmlFor="voice-provider" className="text-sm font-semibold text-gray-900 block mb-2">Provider</label>
-            <select
-              id="voice-provider"
-              value={data.voiceProvider || "elevenlabs"}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange({ voiceProvider: e.target.value })}
-              className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] mt-1.5"
-            >
-              <option value="elevenlabs">ElevenLabs</option>
-              <option value="azure">Azure</option>
-              <option value="google">Google</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="voice-model" className="text-sm font-semibold text-gray-900 block mb-2">Model</label>
-            <select
-              id="voice-model"
-              value={data.voiceModel || "eleven-turbo-v2_5"}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange({ voiceModel: e.target.value })}
-              className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] mt-1.5"
-            >
-              <option value="eleven-turbo-v2_5">eleven_turbo_v2_5</option>
-              <option value="eleven-multilingual">eleven_multilingual</option>
-            </select>
-          </div>
-
-          <div>
             <label htmlFor="voice" className="text-sm font-semibold text-gray-900 block mb-2">Voice</label>
-            <div className="flex gap-2 mt-1.5">
-              <select
-                id="voice"
-                value={data.voice || "wendy"}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange({ voice: e.target.value })}
-                className="flex-1 bg-white border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5]"
-              >
-                <option value="wendy">Wendy</option>
-                <option value="alice">Alice</option>
-                <option value="bob">Bob</option>
-              </select>
-              <button className="w-10 h-10 rounded-full bg-[#4F46E5] text-white flex items-center justify-center hover:bg-[#4338CA] transition-all duration-200 hover:scale-110">
-                <Play className="h-4 w-4 ml-0.5" />
-              </button>
-            </div>
+            <select
+              id="voice"
+              value={data.selectedVoiceId || ""}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                const selectedValue = e.target.value;
+                
+                // Handle "Add voice" option
+                if (selectedValue === "add-voice") {
+                  // Reset dropdown value
+                  if (onClose) {
+                    onClose();
+                    // Navigate to voice lab after a small delay to allow modal to close
+                    setTimeout(() => {
+                      const dashboardElement = document.querySelector('[data-dashboard="true"]');
+                      if (dashboardElement) {
+                        const sidebarButton = document.querySelector('[data-page="voice-lab"]') as HTMLElement;
+                        if (sidebarButton) {
+                          sidebarButton.click();
+                        }
+                      }
+                    }, 100);
+                  }
+                  return;
+                }
+                
+                // Handle voice selection
+                const selectedVoice = userVoices.find(v => v.agentVoiceId === selectedValue);
+                if (selectedVoice) {
+                  onChange({ 
+                    voice: selectedVoice.name,
+                    selectedVoiceId: selectedVoice.agentVoiceId,
+                    voiceId: selectedVoice.voice_id,
+                    voiceProvider: selectedVoice.provider,
+                    voiceModel: selectedVoice.model 
+                  });
+                }
+              }}
+              className={`w-full bg-white border rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 mt-1.5 ${
+                errors?.voice 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:ring-[#4F46E5] focus:border-[#4F46E5]'
+              }`}
+              disabled={voicesLoading}
+            >
+              <option value="">Select a voice...</option>
+              {userVoices.map((voice) => (
+                <option key={voice.agentVoiceId} value={voice.agentVoiceId}>
+                  {voice.name} ({voice.provider})
+                </option>
+              ))}
+              <option value="add-voice">➕ Add voice</option>
+            </select>
+            {errors?.voice && (
+              <p className="text-sm text-red-600 mt-1.5">{errors.voice}</p>
+            )}
           </div>
 
           <div>

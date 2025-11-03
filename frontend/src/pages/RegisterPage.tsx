@@ -194,12 +194,12 @@ const RegisterPage = () => {
             });
 
             // Render hidden Google button
-            window.google.accounts.id.renderButton(googleButtonRef.current, {
+              window.google.accounts.id.renderButton(googleButtonRef.current, {
               theme: "outline",
-              size: "large",
-              text: "continue_with",
+                size: "large",
+                text: "continue_with",
               width: 400,
-            });
+              });
           }
         };
         script.onerror = () => {
@@ -215,12 +215,12 @@ const RegisterPage = () => {
         });
 
         // Render hidden Google button
-        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          window.google.accounts.id.renderButton(googleButtonRef.current, {
           theme: "outline",
-          size: "large",
-          text: "continue_with",
+            size: "large",
+            text: "continue_with",
           width: 400,
-        });
+          });
       }
     };
 
