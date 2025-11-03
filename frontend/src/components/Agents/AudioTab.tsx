@@ -303,12 +303,27 @@ export const AudioTab = ({ data, onChange, onClose, errors }: AudioTabProps) => 
                 // Handle voice selection
                 const selectedVoice = userVoices.find(v => v.agentVoiceId === selectedValue);
                 if (selectedVoice) {
+                  console.log('[AudioTab] Selected voice data:', {
+                    name: selectedVoice.name,
+                    model: selectedVoice.model,
+                    voice_id: selectedVoice.voice_id,
+                    provider: selectedVoice.provider,
+                    fullVoice: selectedVoice
+                  });
+                  
                   onChange({ 
                     voice: selectedVoice.name,
                     selectedVoiceId: selectedVoice.agentVoiceId,
                     voiceId: selectedVoice.voice_id,
                     voiceProvider: selectedVoice.provider,
                     voiceModel: selectedVoice.model 
+                  });
+                  
+                  console.log('[AudioTab] Data sent to onChange:', {
+                    voice: selectedVoice.name,
+                    voiceModel: selectedVoice.model,
+                    voiceId: selectedVoice.voice_id,
+                    voiceProvider: selectedVoice.provider
                   });
                 }
               }}

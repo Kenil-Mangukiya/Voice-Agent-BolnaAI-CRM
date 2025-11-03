@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, FileText, Settings, Brain, Headphones, Phone, Play, Wrench, BarChart3, PhoneIncoming, Bot } from "lucide-react";
+import { Check, FileText, Settings, Brain, Headphones, Phone, Play, Wrench, BarChart3, PhoneIncoming, Bot, AlertCircle, X } from "lucide-react";
 import { AgentTab } from "./AgentTab";
 import { LLMTab } from "./LLMTab";
 import { AudioTab } from "./AudioTab";
@@ -45,6 +45,7 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
   });
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const currentTabIndex = tabs.findIndex((tab) => tab.id === currentTab);
   const completedCount = tabs.filter((tab) => tab.completed).length;
@@ -95,6 +96,9 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
   };
 
   const handleSave = async () => {
+    // Clear any previous errors
+    setSaveError(null);
+    
     // Validate required fields
     const errors: any = {};
     if (!agentData.name || !agentData.name.trim()) {
@@ -197,60 +201,100 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
                 provider_config: (() => {
                   const provider = (agentData.voiceProvider || "elevenlabs").toLowerCase();
                   
+                  // Log all voice-related data from agentData
+                  console.log('[AgentBuilder] Voice Data in agentData:', {
+                    voiceProvider: agentData.voiceProvider,
+                    voice: agentData.voice,
+                    voiceModel: agentData.voiceModel,
+                    voiceId: agentData.voiceId,
+                    speedRate: agentData.speedRate,
+                    bufferSize: agentData.bufferSize,
+                    selectedVoiceId: agentData.selectedVoiceId
+                  });
+                  
                   switch (provider) {
                     case 'elevenlabs':
-                      // ElevenLabs format with dynamic values
-                      return {
+                      // ElevenLabs structure: voice_id, model, speed, voice, temperature, similarity_boost
+                      const elevenLabsConfig = {
+                        voice_id: agentData.voiceId || "",
                         model: agentData.voiceModel || "eleven_turbo_v2_5",
                         speed: agentData.speedRate || 1.0,
-                        voice: agentData.voice || "",
-                        voice_id: agentData.voiceId || "",
-                        temperature: agentData.voiceTemperature || 0.5,
-                        similarity_boost: agentData.similarityBoost || 0.5
+                        voice: agentData.voice || "Wendy",
+                        temperature: 0.5,
+                        similarity_boost: 0.5
                       };
+                      
+                      console.log('[AgentBuilder] ElevenLabs provider_config built:', elevenLabsConfig);
+                      console.log('[AgentBuilder] Model value:', elevenLabsConfig.model, '(from agentData.voiceModel:', agentData.voiceModel, ')');
+                      console.log('[AgentBuilder] Voice value:', elevenLabsConfig.voice, '(from agentData.voice:', agentData.voice, ')');
+                      console.log('[AgentBuilder] Temperature:', elevenLabsConfig.temperature, '(always 0.5)');
+                      console.log('[AgentBuilder] Similarity_boost:', elevenLabsConfig.similarity_boost, '(always 0.5)');
+                      return elevenLabsConfig;
                     case 'rime':
-                      // Rime uses ONLY voice_id and model
+                      // Rime structure: voice_id, model, speed, voice, temperature, similarity_boost
                       return {
                         voice_id: agentData.voiceId || "",
-                        model: agentData.voiceModel || ""
+                        model: agentData.voiceModel || "",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        temperature: 0.5,
+                        similarity_boost: 0.5
                       };
                     case 'polly':
-                      // Polly format
+                      // Polly structure: voice_id, model, speed, voice, temperature, similarity_boost
                       return {
+                        voice_id: agentData.voiceId || "",
+                        model: agentData.voiceModel || "",
+                        speed: agentData.speedRate || 1.0,
                         voice: agentData.voice || "",
-                        language: agentData.languageCode || "en-US",
-                        engine: agentData.voiceModel || "neural",
-                        speed: agentData.speedRate || 1.0
+                        temperature: 0.5,
+                        similarity_boost: 0.5
                       };
+                    case 'sarvam':
+                      // Sarvam structure: voice_id, model, speed, voice, temperature, similarity_boost
+                      const sarvamConfig = {
+                        voice_id: agentData.voiceId || "",
+                        model: agentData.voiceModel || "",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        temperature: 0.5,
+                        similarity_boost: 0.5
+                      };
+                      console.log('[AgentBuilder] Sarvam provider_config built:', sarvamConfig);
+                      console.log('[AgentBuilder] Sarvam model:', sarvamConfig.model, '(from agentData.voiceModel:', agentData.voiceModel, ')');
+                      return sarvamConfig;
                     case 'azuretts':
                     case 'google':
                     case 'deepgram':
-                    case 'sarvam':
                     case 'smallest':
-                      const config: any = {
-                        voice_id: agentData.voiceId || ""
-                      };
-                      if (agentData.speedRate && agentData.speedRate !== 1.0) {
-                        config.speed = agentData.speedRate;
-                      }
-                      return config;
-                    case 'inworld':
-                      const inworldConfig: any = {
-                        voice: agentData.voice || ""
-                      };
-                      if (agentData.speedRate && agentData.speedRate !== 1.0) {
-                        inworldConfig.speed = agentData.speedRate;
-                      }
-                      return inworldConfig;
-                    default:
-                      // Default to ElevenLabs format
+                      // All providers structure: voice_id, model, speed, voice, temperature, similarity_boost
                       return {
+                        voice_id: agentData.voiceId || "",
+                        model: agentData.voiceModel || "",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        temperature: 0.5,
+                        similarity_boost: 0.5
+                      };
+                    case 'inworld':
+                      // Inworld structure: voice_id, model, speed, voice, temperature, similarity_boost
+                      return {
+                        voice_id: agentData.voiceId || "",
+                        model: agentData.voiceModel || "",
+                        speed: agentData.speedRate || 1.0,
+                        voice: agentData.voice || "",
+                        temperature: 0.5,
+                        similarity_boost: 0.5
+                      };
+                    default:
+                      // Default structure: voice_id, model, speed, voice, temperature, similarity_boost
+                      return {
+                        voice_id: agentData.voiceId || "",
                         model: agentData.voiceModel || "eleven_turbo_v2_5",
                         speed: agentData.speedRate || 1.0,
                         voice: agentData.voice || "",
-                        voice_id: agentData.voiceId || "",
-                        temperature: agentData.voiceTemperature || 0.5,
-                        similarity_boost: agentData.similarityBoost || 0.5
+                        temperature: 0.5,
+                        similarity_boost: 0.5
                       };
                   }
                 })()
@@ -312,7 +356,21 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
       });
     } catch (error: any) {
       console.error('Error creating agent:', error);
-      alert(error.message || 'Failed to create agent. Please try again.');
+      
+      // Extract detailed error message from backend response
+      // API interceptor already extracts message, but also check data.message for backend's detailed message
+      // Backend apiError format: { success: false, statusCode: 400, message: "...", errors: [] }
+      let errorMessage = 'Failed to create agent. Please try again.';
+      
+      // Priority: error.data.message (backend's apiError) > error.message (from interceptor) > fallback
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      setSaveError(errorMessage);
+      console.error('Agent creation error message:', errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -472,6 +530,27 @@ export const AgentBuilder = ({ mode, onClose, onSave }: AgentBuilderProps) => {
       <div className="flex-1 flex flex-col bg-white">
         <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-3xl">
+            {/* Error Message Display */}
+            {saveError && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-red-800 mb-1">Agent Creation Failed</h3>
+                    <p className="text-sm text-red-700">{saveError}</p>
+                  </div>
+                  <button
+                    onClick={() => setSaveError(null)}
+                    className="flex-shrink-0 text-red-600 hover:text-red-800 transition-colors p-1 rounded hover:bg-red-100"
+                    aria-label="Close error message"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
             {renderTabContent()}
           </div>
         </div>

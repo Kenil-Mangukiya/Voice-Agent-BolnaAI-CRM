@@ -127,7 +127,8 @@ const createAgent = asyncHandler(async (req: any, res: any) => {
             console.error('Error Data:', JSON.stringify(error.response.data, null, 2));
             console.error('='.repeat(80));
             
-            const errorMessage = error.response.data?.message || error.response.data?.error || 'Failed to create agent';
+            // Extract detailed error message - check detail first (most specific), then message, then error
+            const errorMessage = error.response.data?.detail || error.response.data?.message || error.response.data?.error || 'Failed to create agent';
             const statusCode = error.response.status || 500;
             return res.status(statusCode).json(new apiError(statusCode, errorMessage, [], ""));
         } else if (error.request) {
